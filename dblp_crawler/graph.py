@@ -47,6 +47,7 @@ class Graph(metaclass=abc.ABCMeta):
                     continue  # 已经遍历过的不再重复
                 self.publications[publication.key()] = publication
                 for author in publication.authors():
+                    self.edges.add(author.pid(), pid)
                     if author.pid() not in self.persons:  # 如果作者不存在
                         tasks.append(asyncio.create_task(self.download_person(author.pid())))  # 就获取作者
                         self.persons[author.pid()] = None  # 并记录之
@@ -63,7 +64,7 @@ if __name__ == "__main__":
     class GG(Graph):
         def filter_publications(self, publications):
             publications = list(publications)
-            publication = publications[random.randint(0, len(publications))]
+            publication = publications[random.randint(0, len(publications) - 1)]
             print(len(list(publication.authors())))
             yield publication
 
