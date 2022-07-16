@@ -12,6 +12,13 @@ def filter_publications_by_author(publications, pid: str):
                 break
 
 
+def filter_publications_by_keywords(publications, keywords: [str]):
+    for publication in publications:
+        for keyword in keywords:
+            if keyword.lower() in publication.title().lower():
+                yield publication
+
+
 def filter_publications_by_keys(publications, keys: [str]):
     for publication in publications:
         if publication.key() in keys:
@@ -50,6 +57,10 @@ if __name__ == "__main__":
             'journals/corr/abs-1301-5952'
         ]):
             print(publication)
+        print("-" * 100)
+        for publication in filter_publications_by_keywords(person.publications(), ["video", "stream", "live"]):
+            print(publication)
+        print("-" * 100)
         for cooperator, count in count_cooperators(person.publications()).items():
             if count >= 10:
                 print(cooperator, count)
