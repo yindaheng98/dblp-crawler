@@ -54,6 +54,9 @@ class Publication:
         assert data.tag == "r", "Should be xml of a <r> tag in dblpperson!"
         self.data = data[0]
 
+    def key(self):
+        return self.data.attrib["key"]
+
     def authors(self):
         for child in self.data:
             if child.tag == "author":
@@ -73,13 +76,14 @@ class Publication:
     def year(self):
         for child in self.data:
             if child.tag == "year":
-                return child.text
+                return int(child.text)
 
     def __str__(self):
+        key = self.key()
         authors = ", ".join(str(author) for author in self.authors())
         title = self.title()
-        journal_year = "%s:%s" % (self.journal(), self.year())
-        return "%s\n%s\n%s" % (authors, title, journal_year)
+        journal_year = "%s:%d" % (self.journal(), self.year())
+        return "%s\n\t%s\n\t%s\n\t%s" % (key, authors, title, journal_year)
 
 
 class Author:
@@ -90,15 +94,18 @@ class Author:
     def name(self):
         return self.data.text
 
-    def id(self):
+    def pid(self):
         return self.data.attrib['pid']
+
+    def dblpperson(self):
+        return download_person(self.pid())
 
     def __str__(self):
         return self.name()
 
 
-async def download_person(id: str):
-    url = "https://dblp.org/pid/%s.xml" % id
+async def download_person(pid: str):
+    url = "https://dblp.org/pid/%s.xml" % pid
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
             html = await response.text()
