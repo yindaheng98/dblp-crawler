@@ -1,8 +1,11 @@
 import asyncio
 import abc
+import logging
 from itertools import combinations
 from dblp_crawler import download_person, DBLPPerson
 import networkx as nx
+
+logger = logging.getLogger("graph")
 
 
 class Graph(metaclass=abc.ABCMeta):
@@ -32,6 +35,7 @@ class Graph(metaclass=abc.ABCMeta):
                 if publication.key() in self.publications:
                     continue  # 已经遍历过的文章不再重复
                 self.publications[publication.key()] = publication  # 记录下这个文章已遍历
+                logger.info(str(publication))
                 for author in publication.authors():
                     if author.pid() not in self.persons:  # 如果作者不存在
                         tasks.append(asyncio.create_task(self.download_person(author.pid())))  # 就获取作者

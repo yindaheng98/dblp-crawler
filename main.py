@@ -16,7 +16,7 @@ class GG(Graph):
 
 async def main():
     g = GG('74/1552-1')
-    for i in range(3):
+    for i in range(5):
         await g.bfs_once()
     draw(g.networkx())
 
@@ -24,6 +24,6 @@ async def main():
 if __name__ == "__main__":
     import logging
 
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())
