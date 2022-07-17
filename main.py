@@ -1,9 +1,17 @@
 from dblp_crawler import *
 
 keywords = [
-    "video",
-    "streaming",
-    "resolution"
+    r"video.+delivery",
+    r"video.+streaming",
+    r"video.+caching",
+    r"video.+quality",
+    r"super.+resolution",
+    r"dash",
+    r"360.+video",
+    r"video.+360",
+    r"vr.+video",
+    r"video.+vr",
+    r"video.+quality",
 ]
 
 
