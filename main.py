@@ -77,7 +77,9 @@ async def main():
     g = GG(['74/1552-1', '02/894', '94/3601', '96/2572'])
     for i in range(7):
         await g.bfs_once()
-    summary = networkx_drop_noob_once(g.networkx_summary(), filter_min_publications=5)
+    summary = g.networkx_summary()
+    summary = networkx_drop_noob_once(summary, filter_min_publications=5)
+    summary = networkx_drop_thin_edge(summary, filter_min_publications=3)
     with open("summary.json", 'w', encoding='utf8') as f:
         json.dump(summary_to_json(summary), fp=f, cls=JSONEncoder, indent=2)
     with open("summary.json", 'r', encoding='utf8') as fr:

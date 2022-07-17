@@ -104,6 +104,14 @@ def networkx_drop_noob_all(g: nx.Graph, filter_min_publications=3):
     return g
 
 
+def networkx_drop_thin_edge(g: nx.Graph, filter_min_publications=3):
+    for a, b, data in list(g.edges(data=True)):
+        if data is None or 'publications' not in data or len(data['publications']) < filter_min_publications:
+            # 文章数量太少？
+            g.remove_edge(a, b)  # 那应该不是紧密协作
+    return g
+
+
 if __name__ == "__main__":
     import logging
     import random
