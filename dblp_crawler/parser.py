@@ -104,7 +104,10 @@ class Author:
         return self.data.attrib['pid']
 
     async def dblpperson(self):
-        return DBLPPerson(await download_person(self.pid()))
+        data = await download_person(self.pid())
+        if data is None:
+            return None
+        return DBLPPerson(data)
 
     def __str__(self):
         return self.name()

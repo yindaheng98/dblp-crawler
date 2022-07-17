@@ -15,7 +15,8 @@ keywords = [
     r"video.+quality",
     r"video.+communication",
     r"denoising",
-    r"content.+aware"
+    r"content.+aware",
+    r"neural.+video"
 ]
 
 journals_CCF_A = [
@@ -23,8 +24,14 @@ journals_CCF_A = [
     "ACM Multimedia",
     "INFOCOM",
     "SIGCOMM Posters and Demos",
-    "CVPR"
+    "CVPR",
+    "CVPR Workshops",
+    "AAAI",
+    "ICCV",
+    "ICCVW"
 ]
+journals_CCF_A += ["ECCV (%d)" % i for i in range(1, 50)]
+journals_CCF_A += ["ECCV Workshops (%d)" % i for i in range(1, 50)]
 journals_CCF_B = [
     "IEEE Transactions on Multimedia",
     "IEEE Trans. Multim.",
@@ -48,7 +55,11 @@ journals_SCI_Q1 = [
     "IEEE Commun. Surv. Tutorials",
     "IEEE Trans. Broadcast.",
     "IEEE Trans. Pattern Anal. Mach. Intell.",
-    "Remote. Sens."
+    "Remote. Sens.",
+    "Knowl. Based Syst.",
+    "IEEE Trans. Cybern.",
+    "IEEE CAA J. Autom. Sinica",
+    "IEEE Trans. Signal Process."
 ]
 
 
@@ -61,7 +72,7 @@ class GG(Graph):
 
 
 async def main():
-    g = GG(['74/1552-1', '02/894', '94/3601'])
+    g = GG(['74/1552-1', '02/894', '94/3601', '96/2572'])
     for i in range(7):
         await g.bfs_once()
     draw(g.networkx())
