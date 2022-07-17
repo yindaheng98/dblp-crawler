@@ -1,6 +1,6 @@
 import asyncio
 import abc
-from dblp_crawler import download_person
+from dblp_crawler import download_person, DBLPPerson
 
 
 class EdgeDict:
@@ -31,7 +31,7 @@ class Graph(metaclass=abc.ABCMeta):
             yield publication
 
     async def download_person(self, pid: str):
-        self.persons[pid] = await download_person(pid)
+        self.persons[pid] = DBLPPerson(await download_person(pid))
 
     async def bfs_once(self):
         tasks = []

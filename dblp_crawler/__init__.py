@@ -1,2 +1,2 @@
-from .parser import download_person
+from .parser import *
 from .filter import *
