@@ -12,6 +12,12 @@ class DBLPPerson:
         self.data = data
         logger.info(f"<{self.data.tag} %s>" % " ".join("%s=\"%s\"" % (k, v) for k, v in self.data.attrib.items()))
 
+    def pid(self):
+        return self.data.attrib['pid']
+
+    def name(self):
+        return self.data.attrib['name']
+
     def person(self):
         for child in self.data:
             if child.tag == "person":
