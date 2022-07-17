@@ -1,5 +1,3 @@
-import json
-from pprint import pprint
 from dblp_crawler import *
 
 keywords = [
@@ -27,13 +25,14 @@ journals_CCF_A = [
     "INFOCOM",
     "SIGCOMM Posters and Demos",
     "CVPR",
-    "CVPR Workshops",
+    # "CVPR Workshops",
     "AAAI",
     "ICCV",
-    "ICCVW"
+    "ICCVW",
+    "NeurIPS",
+    "IJCAI",
 ]
 journals_CCF_A += ["ECCV (%d)" % i for i in range(1, 50)]
-journals_CCF_A += ["ECCV Workshops (%d)" % i for i in range(1, 50)]
 journals_CCF_B = [
     "IEEE Transactions on Multimedia",
     "IEEE Trans. Multim.",
@@ -44,7 +43,8 @@ journals_CCF_B = [
     "ICNP",
     "ICASSP",
     "ICME Workshops",
-    "ICME"
+    "ICME",
+    "CIKM",
 ]
 journals_SCI_Q1 = [
     "IEEE J. Sel. Areas Commun.",
@@ -61,7 +61,16 @@ journals_SCI_Q1 = [
     "Knowl. Based Syst.",
     "IEEE Trans. Cybern.",
     "IEEE CAA J. Autom. Sinica",
-    "IEEE Trans. Signal Process."
+    "IEEE Trans. Signal Process.",
+    "Comput. Networks",
+    "IEEE Trans. Parallel Distributed Syst.",
+    "IEEE Trans. Veh. Technol.",
+    "IEEE Trans. Geosci. Remote. Sens.",
+    "IEEE J. Sel. Top. Appl. Earth Obs. Remote. Sens.",
+    "Future Gener. Comput. Syst.",
+    "Pattern Recognit.",
+    "IEEE Trans. Neural Networks Learn. Syst.",
+    "Neural Networks"
 ]
 
 
@@ -78,8 +87,8 @@ async def main():
     for i in range(7):
         await g.bfs_once()
     summary = g.networkx_summary()
-    summary = networkx_drop_noob_once(summary, filter_min_publications=5)
-    summary = networkx_drop_thin_edge(summary, filter_min_publications=3)
+    summary = networkx_drop_noob_once(summary, filter_min_publications=4)
+    summary = networkx_drop_thin_edge(summary, filter_min_publications=2)
     with open("summary.json", 'w', encoding='utf8') as f:
         json.dump(summary_to_json(summary), fp=f, cls=JSONEncoder, indent=2)
     with open("summary.json", 'r', encoding='utf8') as fr:

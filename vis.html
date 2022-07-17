@@ -10,8 +10,16 @@
         }
 
         #mynetwork {
-            width: 600px;
+            width: 49%;
             height: 600px;
+            float:left; display:inline;
+            border: 1px solid lightgray;
+        }
+
+        #publications {
+            width: 49%;
+            height: 600px;
+            float:left; display:inline;
             border: 1px solid lightgray;
         }
     </style>
@@ -41,7 +49,20 @@
                     },
                 },
             };
-            network = new vis.Network(container, data, options);
+            nodes = new vis.DataSet(data.nodes)
+            edges = new vis.DataSet(data.edges)
+            network = new vis.Network(container, {nodes: nodes, edges: edges}, options);
+            text = ''
+            network.on("click", function (properties) {
+                if (properties.nodes.length > 0) {
+                    let n = nodes.get(properties.nodes)[0]
+                    text = n.data.person + "\n\n" + n.data.publications.join('\n\n')
+                } else if (properties.edges.length > 0) {
+                    let e = edges.get(properties.edges)[0]
+                    text = e.data.publications.join('\n\n')
+                }
+                document.getElementById("publications").innerText = text
+            });
         }
     </script>
 </head>
@@ -51,5 +72,6 @@
     popup with more information.
 </p>
 <div id="mynetwork"></div>
+<div id="publications"></div>
 </body>
 </html>
