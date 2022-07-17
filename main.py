@@ -42,7 +42,9 @@ journals_SCI_Q1 = [
     "IEEE Trans. Circuits Syst. Video Technol.",
     "IEEE J. Sel. Top. Signal Process.",
     "IEEE Commun. Surv. Tutorials",
-    "IEEE Trans. Broadcast."
+    "IEEE Trans. Broadcast.",
+    "IEEE Trans. Pattern Anal. Mach. Intell.",
+    "Remote. Sens."
 ]
 
 
