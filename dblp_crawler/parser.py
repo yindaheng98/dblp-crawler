@@ -65,7 +65,7 @@ class Publication:
     def title(self):
         for child in self.data:
             if child.tag == "title":
-                return child.text
+                return " ".join(t for t in child.itertext())
 
     def journal(self):
         tag = {'inproceedings': 'booktitle', 'article': 'journal'}
