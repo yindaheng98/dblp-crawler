@@ -1,3 +1,6 @@
+import re
+
+
 def filter_publications_after(publications, year: int):
     for publication in publications:
         if publication.year() >= year:
@@ -15,7 +18,7 @@ def filter_publications_by_author(publications, pid: str):
 def filter_publications_by_keywords(publications, keywords: [str]):
     for publication in publications:
         for keyword in keywords:
-            if keyword.lower() in publication.title().lower():
+            if re.search(keyword.lower(), publication.title().lower()) is not None:
                 yield publication
                 break
 
