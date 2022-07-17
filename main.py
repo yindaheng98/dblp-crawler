@@ -14,11 +14,43 @@ keywords = [
     r"video.+quality",
 ]
 
+journals_CCF_A = [
+    "WWW",
+    "ACM Multimedia",
+    "INFOCOM",
+    "SIGCOMM Posters and Demos",
+    "CVPR"
+]
+journals_CCF_B = [
+    "IEEE Transactions on Multimedia",
+    "IEEE Trans. Multim.",
+    "NOSSDAV",
+    "IWQoS",
+    "IEEE Trans. Wirel. Commun.",
+    "MASS",
+    "ICNP",
+    "ICASSP",
+    "ICME Workshops",
+    "ICME"
+]
+journals_SCI_Q1 = [
+    "IEEE J. Sel. Areas Commun.",
+    "IEEE Trans. Image Process.",
+    "IEEE Trans. Multim.",
+    "IEEE Multim.",
+    "Neurocomputing",
+    "IEEE Trans. Circuits Syst. Video Technol.",
+    "IEEE J. Sel. Top. Signal Process.",
+    "IEEE Commun. Surv. Tutorials",
+    "IEEE Trans. Broadcast."
+]
+
 
 class GG(Graph):
     def filter_publications(self, publications):
         publications = filter_publications_by_keywords(publications, keywords)
         publications = filter_publications_after(publications, 2020)
+        publications = filter_publications_by_journals(publications, journals_CCF_A + journals_CCF_B + journals_SCI_Q1)
         return publications
 
 

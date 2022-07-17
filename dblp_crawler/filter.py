@@ -1,4 +1,7 @@
 import re
+import logging
+
+logger = logging.getLogger("downloader")
 
 
 def filter_publications_after(publications, year: int):
@@ -27,6 +30,14 @@ def filter_publications_by_keys(publications, keys: [str]):
     for publication in publications:
         if publication.key() in keys:
             yield publication
+
+
+def filter_publications_by_journals(publications, journals: [str]):
+    for publication in publications:
+        if publication.journal() in journals:
+            yield publication
+        else:
+            logger.info("Dropped: %s" % publication.journal())
 
 
 def count_cooperators(publications):

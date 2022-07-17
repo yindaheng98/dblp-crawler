@@ -42,7 +42,7 @@ class Graph(metaclass=abc.ABCMeta):
                         self.persons[author.pid()] = None  # 并记录之
         await asyncio.gather(*tasks)
 
-    def networkx(self, filter_min_publications=4):
+    def networkx(self, filter_min_publications=3):
         g = nx.MultiGraph()
         publications = {}
         for _, publication in self.publications.items():
