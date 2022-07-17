@@ -53,7 +53,7 @@ class Graph(metaclass=abc.ABCMeta):
                 publications[author_pid].add(publication.key())
         for pid, person in self.persons.items():
             if len(publications[pid]) >= filter_min_publications:
-                g.add_node(pid, data=person)
+                g.add_node(pid, data=person, count=len(publications[pid]))
             else:
                 g.remove_node(pid)
         return g
