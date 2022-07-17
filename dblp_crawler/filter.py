@@ -17,6 +17,7 @@ def filter_publications_by_keywords(publications, keywords: [str]):
         for keyword in keywords:
             if keyword.lower() in publication.title().lower():
                 yield publication
+                break
 
 
 def filter_publications_by_keys(publications, keys: [str]):
