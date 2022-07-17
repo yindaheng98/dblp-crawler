@@ -38,16 +38,24 @@ class Graph(metaclass=abc.ABCMeta):
                         self.persons[author.pid()] = None  # 并记录之
         await asyncio.gather(*tasks)
 
-    def networkx(self):
+    def networkx(self, filter_min_publications=4):
         g = nx.MultiGraph()
-        for pid, person in self.persons.items():
-            g.add_node(pid, data=person)
+        publications = {}
         for _, publication in self.publications.items():
             authors_pid = {author.pid() for author in publication.authors()}
             for a, b in combinations(authors_pid, 2):
                 if a == b:
                     continue
                 g.add_edge(a, b, key=publication.key(), data=publication)
+            for author_pid in authors_pid:
+                if author_pid not in publications:
+                    publications[author_pid] = set()
+                publications[author_pid].add(publication.key())
+        for pid, person in self.persons.items():
+            if len(publications[pid]) >= filter_min_publications:
+                g.add_node(pid, data=person)
+            else:
+                g.remove_node(pid)
         return g
 
 
