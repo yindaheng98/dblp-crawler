@@ -9,8 +9,8 @@ logger = logging.getLogger("graph")
 
 
 class Graph(metaclass=abc.ABCMeta):
-    def __init__(self, pid: str):
-        self.persons = {pid: None}
+    def __init__(self, pid_list: [str]):
+        self.persons = {pid: None for pid in pid_list}
         self.checked = set()
         self.publications = {}
 
@@ -56,6 +56,8 @@ class Graph(metaclass=abc.ABCMeta):
                     publications[author_pid] = set()
                 publications[author_pid].add(publication.key())
         for pid, person in self.persons.items():
+            if pid not in publications:
+                continue
             if len(publications[pid]) >= filter_min_publications:
                 g.add_node(pid, data=person, count=len(publications[pid]))
             else:

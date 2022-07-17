@@ -3,6 +3,7 @@ from dblp_crawler import *
 keywords = [
     r"video.+delivery",
     r"video.+streaming",
+    r"streaming.+video",
     r"video.+caching",
     r"video.+quality",
     r"super.+resolution",
@@ -12,6 +13,9 @@ keywords = [
     r"vr.+video",
     r"video.+vr",
     r"video.+quality",
+    r"video.+communication",
+    r"denoising",
+    r"content.+aware"
 ]
 
 journals_CCF_A = [
@@ -57,8 +61,8 @@ class GG(Graph):
 
 
 async def main():
-    g = GG('74/1552-1')
-    for i in range(5):
+    g = GG(['74/1552-1', '02/894', '94/3601'])
+    for i in range(7):
         await g.bfs_once()
     draw(g.networkx())
 
