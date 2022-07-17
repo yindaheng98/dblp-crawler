@@ -63,15 +63,14 @@ class Graph(metaclass=abc.ABCMeta):
     def networkx_summary(self):
         g = self.networkx()
         gg = nx.Graph()
-        gg.add_nodes_from(g)
         authors = {}
         for (a, b, d) in g.edges(data=True):  # 遍历所有文章
             publication = d['publication']
             # 把文章加进边信息里
             data = gg.get_edge_data(a, b)
-            if data is None or "publication" not in data:
-                data = {"publication": []}
-            data["publication"].append(d)
+            if data is None or "publications" not in data:
+                data = {"publications": []}
+            data["publications"].append(d)
             gg.add_edge(a, b, **data)
             # 把文章加进作者信息里
             if a not in authors:
@@ -81,13 +80,14 @@ class Graph(metaclass=abc.ABCMeta):
                 authors[b] = {}
             authors[b][publication.key()] = publication
         for pid, publications in authors.items():
-            gg.add_node(pid, publications=list(publications.values()))
+            gg.add_node(pid, person=g.nodes[pid]['person'], publications=list(publications.values()))
         return gg
 
 
 def networkx_drop_noob_once(g: nx.Graph, filter_min_publications=3):
     for node, data in list(g.nodes(data=True)):
-        if len(data['publications']) < filter_min_publications:  # 文章数量太少？
+        if data is None or 'publications' not in data or len(data['publications']) < filter_min_publications:
+            # 文章数量太少？
             g.remove_node(node)  # 应该不是老师吧
     return g
 
@@ -96,8 +96,9 @@ def networkx_drop_noob_all(g: nx.Graph, filter_min_publications=3):
     more = True
     while more:
         more = False
-        for node, publications in list(g.nodes(data=True)):
-            if len(publications) < filter_min_publications:  # 文章数量太少？
+        for node, data in list(g.nodes(data=True)):
+            if data is None or 'publications' not in data or len(data['publications']) < filter_min_publications:
+                # 文章数量太少？
                 g.remove_node(node)  # 应该不是老师吧
                 more = True  # 需要连带删除
     return g
