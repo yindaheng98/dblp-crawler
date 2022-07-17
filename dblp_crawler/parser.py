@@ -1,7 +1,7 @@
-import logging
-import aiohttp
 import asyncio
+import logging
 import xml.etree.ElementTree as ElementTree
+from .downloader import download_person
 
 logger = logging.getLogger("parser")
 
@@ -97,20 +97,11 @@ class Author:
     def pid(self):
         return self.data.attrib['pid']
 
-    def dblpperson(self):
-        return download_person(self.pid())
+    async def dblpperson(self):
+        return DBLPPerson(await download_person(self.pid()))
 
     def __str__(self):
         return self.name()
-
-
-async def download_person(pid: str):
-    url = "https://dblp.org/pid/%s.xml" % pid
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url) as response:
-            html = await response.text()
-            data = ElementTree.fromstring(html)
-            return DBLPPerson(data)
 
 
 if __name__ == "__main__":
@@ -118,7 +109,7 @@ if __name__ == "__main__":
 
 
     async def main():
-        print(await download_person('74/1552-1'))
+        print(DBLPPerson(await download_person('74/1552-1')))
 
 
     loop = asyncio.get_event_loop()
