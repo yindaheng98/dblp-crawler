@@ -47,7 +47,7 @@ class Graph(metaclass=abc.ABCMeta):
             for a, b in combinations(authors_pid, 2):
                 if a == b:
                     continue
-                g.add_edge(a, b, key=publication.key(), publication=publication)
+                g.add_edge(a, b, key=publication.key(), data=publication)
         return g
 
 
