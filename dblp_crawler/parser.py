@@ -1,4 +1,5 @@
 import asyncio
+import json
 import logging
 import xml.etree.ElementTree as ElementTree
 from .downloader import download_person
@@ -111,6 +112,15 @@ class Author:
 
     def __str__(self):
         return self.name()
+
+
+class JSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, DBLPPerson):
+            return str(obj.person())
+        if isinstance(obj, Publication):
+            return str(obj)
+        return json.JSONEncoder.default(self, obj)
 
 
 if __name__ == "__main__":

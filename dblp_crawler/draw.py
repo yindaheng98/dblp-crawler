@@ -19,3 +19,16 @@ def draw_summary(g: nx.Graph):
     fig.tight_layout()
     plt.axis("off")
     plt.show()
+
+
+def summary_to_json(g: nx.Graph):
+    print(f"Loaded {g.number_of_edges()} publications between {g.number_of_nodes()} authors\n")
+    nodes = [
+        {'id': k, 'label': d['person'].name(), 'value': len(d['publications']), 'data': d}
+        for k, d in g.nodes(data=True)
+    ]
+    edges = [
+        {'from': u, 'to': v, 'value': len(d['publications']), 'data': d}
+        for u, v, d in g.edges(data=True)
+    ]
+    return {"nodes": nodes, "edges": edges}
