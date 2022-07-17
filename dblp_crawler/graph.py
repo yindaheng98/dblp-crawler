@@ -45,27 +45,44 @@ class Graph(metaclass=abc.ABCMeta):
                         self.persons[author.pid()] = None  # 并记录之
         await asyncio.gather(*tasks)
 
-    def networkx(self, filter_min_publications=3):
+    def networkx(self):
         g = nx.MultiGraph()
-        publications = {}
-        for _, publication in self.publications.items():
-            authors_pid = {author.pid() for author in publication.authors()}
-            for a, b in combinations(authors_pid, 2):
+        author_publications = {}
+        for _, publication in self.publications.items():  # 先遍历所有文章
+            authors_pid = {author.pid() for author in publication.authors()}  # 获取作者列表
+            for a, b in combinations(authors_pid, 2):  # 列表中的作者两两之间发生关联
                 if a == b:
                     continue
-                g.add_edge(a, b, key=publication.key(), data=publication)
-            for author_pid in authors_pid:
-                if author_pid not in publications:
-                    publications[author_pid] = set()
-                publications[author_pid].add(publication.key())
-        for pid, person in self.persons.items():
-            if pid not in publications:
+                g.add_edge(a, b, key=publication.key(), publication=publication)  # 把这关联加进图里
+            for author_pid in authors_pid:  # 文章还属于列表中的每个作者
+                if author_pid not in author_publications:
+                    author_publications[author_pid] = {}
+                author_publications[author_pid][publication.key()] = publication  # 把这关联记下来
+        for pid, person in self.persons.items():  # 再遍历所有作者
+            if pid not in author_publications:
                 continue
-            if len(publications[pid]) >= filter_min_publications:
-                g.add_node(pid, data=person, count=len(publications[pid]))
-            else:
-                g.remove_node(pid)
+            g.add_node(pid, person=person, publications=author_publications[pid])  # 把作者信息和文章列表加进图里
         return g
+
+
+def networkx_drop_noob_once(g: nx.MultiGraph, filter_min_publications=3):
+    for node, data in list(g.nodes(data=True)):
+        publications = data['publications']
+        if len(publications) < filter_min_publications:  # 文章数量太少？
+            g.remove_node(node)  # 应该不是老师吧
+    return g
+
+
+def networkx_drop_noob_all(g: nx.MultiGraph, filter_min_publications=3):
+    more = True
+    while more:
+        more = False
+        for node, data in list(g.nodes(data=True)):
+            publications = data['publications']
+            if len(publications) < filter_min_publications:  # 文章数量太少？
+                g.remove_node(node)  # 应该不是老师吧
+                more = True  # 需要连带删除
+    return g
 
 
 if __name__ == "__main__":
@@ -84,14 +101,14 @@ if __name__ == "__main__":
 
 
     async def main():
-        g = GG('74/1552-1')
+        g = GG(['74/1552-1'])
         await g.bfs_once()
         print("-" * 100)
         await g.bfs_once()
         print("-" * 100)
         await g.bfs_once()
         print("-" * 100)
-        x = g.networkx()
+        x = networkx_drop_noob_all(g.networkx(), 2)
         print(x)
 
 
