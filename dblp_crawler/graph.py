@@ -20,7 +20,10 @@ class Graph(metaclass=abc.ABCMeta):
             yield publication
 
     async def download_person(self, pid: str):
-        self.persons[pid] = DBLPPerson(await download_person(pid))
+        data = await download_person(pid)
+        if data is None:
+            return
+        self.persons[pid] = DBLPPerson(data)
 
     async def bfs_once(self):
         tasks = []

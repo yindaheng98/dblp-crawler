@@ -15,7 +15,7 @@ def draw(g: nx.MultiGraph):
         publications[v].add(d["data"].key())
     edgewidth = [len(g.get_edge_data(u, v)) * 3 for u, v in h.edges()]
     nodesize = [data["count"] * 300 for pid, data in h.nodes(data=True)]
-    labels = {pid: str(data["data"].person()) for pid, data in h.nodes(data=True)}
+    labels = {pid: data["data"].name() for pid, data in h.nodes(data=True)}
     pos = nx.kamada_kawai_layout(h)
 
     fig, ax = plt.subplots(figsize=(24, 24))
