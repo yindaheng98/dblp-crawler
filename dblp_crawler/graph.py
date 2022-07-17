@@ -47,38 +47,56 @@ class Graph(metaclass=abc.ABCMeta):
 
     def networkx(self):
         g = nx.MultiGraph()
-        author_publications = {}
-        for _, publication in self.publications.items():  # 先遍历所有文章
+
+        for pid, person in self.persons.items():  # 遍历所有作者
+            g.add_node(pid, person=person)  # 把作者信息加进图里
+
+        for _, publication in self.publications.items():  # 遍历所有文章
             authors_pid = {author.pid() for author in publication.authors()}  # 获取作者列表
-            for a, b in combinations(authors_pid, 2):  # 列表中的作者两两之间发生关联
+            for a, b in combinations(authors_pid, 2):  # 列表中的作者两两之间形成边
                 if a == b:
                     continue
-                g.add_edge(a, b, key=publication.key(), publication=publication)  # 把这关联加进图里
-            for author_pid in authors_pid:  # 文章还属于列表中的每个作者
-                if author_pid not in author_publications:
-                    author_publications[author_pid] = {}
-                author_publications[author_pid][publication.key()] = publication  # 把这关联记下来
-        for pid, person in self.persons.items():  # 再遍历所有作者
-            if pid not in author_publications:
-                continue
-            g.add_node(pid, person=person, publications=author_publications[pid])  # 把作者信息和文章列表加进图里
+                g.add_edge(a, b, key=publication.key(), publication=publication)  # 把边加进图里
+
         return g
 
+    def networkx_summary(self):
+        g = self.networkx()
+        gg = nx.Graph()
+        gg.add_nodes_from(g)
+        authors = {}
+        for (a, b, d) in g.edges(data=True):  # 遍历所有文章
+            publication = d['publication']
+            # 把文章加进边信息里
+            data = gg.get_edge_data(a, b)
+            if data is None or "publication" not in data:
+                data = {"publication": []}
+            data["publication"].append(d)
+            gg.add_edge(a, b, **data)
+            # 把文章加进作者信息里
+            if a not in authors:
+                authors[a] = {}
+            authors[a][publication.key()] = publication
+            if b not in authors:
+                authors[b] = {}
+            authors[b][publication.key()] = publication
+        for pid, publications in authors.items():
+            gg.add_node(pid, publications=list(publications.values()))
+        return gg
 
-def networkx_drop_noob_once(g: nx.MultiGraph, filter_min_publications=3):
+
+def networkx_drop_noob_once(g: nx.Graph, filter_min_publications=3):
     for node, data in list(g.nodes(data=True)):
-        publications = data['publications']
-        if len(publications) < filter_min_publications:  # 文章数量太少？
+        if len(data['publications']) < filter_min_publications:  # 文章数量太少？
             g.remove_node(node)  # 应该不是老师吧
     return g
 
 
-def networkx_drop_noob_all(g: nx.MultiGraph, filter_min_publications=3):
+def networkx_drop_noob_all(g: nx.Graph, filter_min_publications=3):
     more = True
     while more:
         more = False
-        for node, data in list(g.nodes(data=True)):
-            publications = data['publications']
+        for node, publications in list(g.nodes(data=True)):
             if len(publications) < filter_min_publications:  # 文章数量太少？
                 g.remove_node(node)  # 应该不是老师吧
                 more = True  # 需要连带删除
@@ -88,6 +106,7 @@ def networkx_drop_noob_all(g: nx.MultiGraph, filter_min_publications=3):
 if __name__ == "__main__":
     import logging
     import random
+    import matplotlib.pyplot as plt
 
     logging.basicConfig(level=logging.DEBUG)
 
@@ -108,8 +127,19 @@ if __name__ == "__main__":
         print("-" * 100)
         await g.bfs_once()
         print("-" * 100)
-        x = networkx_drop_noob_all(g.networkx(), 2)
-        print(x)
+
+        fig, ax = plt.subplots(figsize=(12, 12))
+        nx.draw(g.networkx_summary(), ax=ax)
+        ax.margins(0.1, 0.05)
+        fig.tight_layout()
+
+        fig, ax = plt.subplots(figsize=(12, 12))
+        nx.draw(networkx_drop_noob_once(g.networkx_summary()), ax=ax)
+        ax.margins(0.1, 0.05)
+        fig.tight_layout()
+
+        plt.axis("off")
+        plt.show()
 
 
     loop = asyncio.get_event_loop()
