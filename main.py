@@ -75,7 +75,7 @@ async def main():
     g = GG(['74/1552-1', '02/894', '94/3601', '96/2572'])
     for i in range(7):
         await g.bfs_once()
-    draw(g.networkx())
+    draw_summary(networkx_drop_noob_once(g.networkx_summary(), filter_min_publications=5))
 
 
 if __name__ == "__main__":
