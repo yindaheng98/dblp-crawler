@@ -35,7 +35,7 @@ class GG(Graph):
     def filter_publications(self, publications):
         publications = filter_publications_by_keywords(publications, keywords)
         publications = filter_publications_after(publications, 2020)
-        publications = filter_publications_by_journals(publications, set.union(CCF_A))
+        publications = filter_publications_by_journals(publications, CCF_A)
         return publications
 
 

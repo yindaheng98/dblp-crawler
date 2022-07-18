@@ -37,16 +37,16 @@ keepped_journal = set()
 all_journal = set()
 
 
-async def filter_publications_by_journals(publications, journals: [str]):
+def filter_publications_by_journals(publications, journals: [str]):
     for publication in publications:
-        full_name = await publication.journal_full_name()
+        full_name = publication.journal()
         all_journal.add(full_name)
-        if full_name in journals:
+        if publication.journal_key() in journals:
             keepped_journal.add(full_name)
             yield publication
         else:
-            logger.debug("Dropped: %s" % full_name)
-            dropped_journal.add(full_name)
+            logger.debug("Dropped: %s" % publication.journal())
+            dropped_journal.add(publication.journal())
 
 
 def count_cooperators(publications):
