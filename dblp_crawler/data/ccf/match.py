@@ -1,13 +1,9 @@
+from list import CCF_A as a
+from list import CCF_B as b
+from list import CCF_C as c
+from matched import data as freezed
 from data import data
 import json
-
-# from parse import a,b,c
-with open("CCF_A.json", 'r', encoding='utf8') as f:
-    a = json.load(f)
-with open("CCF_B.json", 'r', encoding='utf8') as f:
-    b = json.load(f)
-with open("CCF_C.json", 'r', encoding='utf8') as f:
-    c = json.load(f)
 
 
 def LongestCommonSequence(str_one, str_two):
@@ -50,13 +46,6 @@ def LCS(str1, str2):
     res = str1[pos - max_len + 1:pos + 1]
     return res
 
-
-freezed = {}
-try:
-    with open("matched_edited.json", 'r', encoding='utf8') as f:
-        freezed = json.load(f)
-except:
-    print("matched_edited.json not exists")
 
 mdata = a + b + c
 matched = {}
