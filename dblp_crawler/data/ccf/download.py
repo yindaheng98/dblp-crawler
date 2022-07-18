@@ -1,5 +1,5 @@
 import re
-from dblp_crawler.data.ccf.raw import *
+from .raw import *
 
 
 def key(r):

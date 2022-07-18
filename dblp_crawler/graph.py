@@ -15,7 +15,7 @@ class Graph(metaclass=abc.ABCMeta):
         self.publications = {}
 
     @abc.abstractmethod
-    async def filter_publications(self, publications):
+    def filter_publications(self, publications):
         for publication in publications:
             yield publication
 
@@ -34,7 +34,7 @@ class Graph(metaclass=abc.ABCMeta):
             if pid in self.checked:
                 continue  # 已经遍历过的节点不再重复
             self.checked.add(pid)  # 记录下这个节点已遍历
-            async for publication in self.filter_publications(person.publications()):
+            for publication in self.filter_publications(person.publications()):
                 if publication.key() in self.publications:
                     continue  # 已经遍历过的文章不再重复
                 self.publications[publication.key()] = publication  # 记录下这个文章已遍历

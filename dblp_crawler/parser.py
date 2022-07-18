@@ -80,6 +80,12 @@ class Publication:
             if self.data.tag in tag and child.tag == tag[self.data.tag]:
                 return child.text
 
+    def journal_key(self):
+        tag = {'inproceedings': 'booktitle', 'article': 'journal'}
+        for child in self.data:
+            if child.tag == "url":
+                return "/".join(child.text.split("/")[0:3])
+
     async def journal_full_name(self):
         for child in self.data:
             if child.tag == "url":
