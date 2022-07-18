@@ -1,4 +1,4 @@
-[
+data = [
   "1 TACO  ACM Transactions on Architecture and Code Optimization  ACM  http://dblp.uni -trier.de/db/journals/taco/",
   "2 TAAS  ACM Transactions on Autonomous and Adaptive Systems  ACM  http://dblp.uni -trier.de/db/journals/taas/",
   "3 TODAES  ACM Transactions on Design Automation of Electronic Systems  ACM  http://dblp.uni -trier.de/db/journals/todaes/",
