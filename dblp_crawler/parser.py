@@ -11,7 +11,7 @@ class DBLPPerson:
     def __init__(self, data: ElementTree.Element):
         assert data.tag == "dblpperson", "Should be xml of a dblpperson!"
         self.data = data
-        logger.info(f"<{self.data.tag} %s>" % " ".join("%s=\"%s\"" % (k, v) for k, v in self.data.attrib.items()))
+        logger.debug(f"<{self.data.tag} %s>" % " ".join("%s=\"%s\"" % (k, v) for k, v in self.data.attrib.items()))
 
     def pid(self):
         return self.data.attrib['pid']
