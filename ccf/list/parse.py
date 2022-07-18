@@ -69,9 +69,12 @@ for dv in data.values():
                 current.append(v)
 import json
 
-with open("CCF_A.json", 'w', encoding='utf8') as f:
+with open("CCF_A.py", 'w', encoding='utf8') as f:
+    f.write("data = ")
     json.dump(a, f, indent=2)
-with open("CCF_B.json", 'w', encoding='utf8') as f:
+with open("CCF_B.py", 'w', encoding='utf8') as f:
+    f.write("data = ")
     json.dump(b, f, indent=2)
-with open("CCF_C.json", 'w', encoding='utf8') as f:
+with open("CCF_C.py", 'w', encoding='utf8') as f:
+    f.write("data = ")
     json.dump(c, f, indent=2)
