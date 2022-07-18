@@ -1,4 +1,4 @@
-[
+data = [
   "1 TOCS  ACM Transactions on Computer Systems  ACM  http://dblp.uni -trier.de/db/journals/tocs/",
   "2 TOS  ACM Transactions on Storage  ACM  http://dblp.uni -trier.de/db/journals/tos/",
   "3 TCAD  IEEE Transactions on Computer -Aided Design ofIntegrated Circuits And System  IEEE  http://dblp.uni -trier.de/db/journals/tcad/",

@@ -1,4 +1,4 @@
-[
+data = [
   "1 JETC  ACM Journal on Emerging Technologies inComputing Systems  ACM  http://dblp.uni -trier.de/db/journals/jetc/",
   "2  Concurrency and Computation: Practice andExperience  Wiley  http://dblp.uni -trier.de/db/journals/concurrency/",
   "3 DC  Distributed Computing  Springer  http://dblp.uni -trier.de/db/journals/dc/",
