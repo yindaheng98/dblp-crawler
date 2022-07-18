@@ -1,6 +1,7 @@
-import json
+from pprint import pprint
 
 from dblp_crawler import *
+from dblp_crawler.data.CCF import CCF_A, CCF_B
 
 keywords = [
     r"video.+delivery",
@@ -29,66 +30,12 @@ keywords = [
     r"hdr"
 ]
 
-journals_CCF_A = [
-    "WWW",
-    "ACM Multimedia",
-    "INFOCOM",
-    "SIGCOMM Posters and Demos",
-    "CVPR",
-    # "CVPR Workshops",
-    "AAAI",
-    "ICCV",
-    "ICCVW",
-    "NeurIPS",
-    "IJCAI",
-]
-journals_CCF_A += ["ECCV (%d)" % i for i in range(1, 50)]
-journals_CCF_B = [
-    "IEEE Transactions on Multimedia",
-    "IEEE Trans. Multim.",
-    "NOSSDAV",
-    "IWQoS",
-    "IEEE Trans. Wirel. Commun.",
-    "MASS",
-    "ICNP",
-    "ICASSP",
-    "ICME Workshops",
-    "ICME",
-    "CIKM",
-]
-journals_SCI_Q1 = [
-    "IEEE J. Sel. Areas Commun.",
-    "IEEE Trans. Image Process.",
-    "IEEE Trans. Multim.",
-    "IEEE Multim.",
-    "Neurocomputing",
-    "IEEE Trans. Circuits Syst. Video Technol.",
-    "IEEE J. Sel. Top. Signal Process.",
-    "IEEE Commun. Surv. Tutorials",
-    "IEEE Trans. Broadcast.",
-    "IEEE Trans. Pattern Anal. Mach. Intell.",
-    "Remote. Sens.",
-    "Knowl. Based Syst.",
-    "IEEE Trans. Cybern.",
-    "IEEE CAA J. Autom. Sinica",
-    "IEEE Trans. Signal Process.",
-    "Comput. Networks",
-    "IEEE Trans. Parallel Distributed Syst.",
-    "IEEE Trans. Veh. Technol.",
-    "IEEE Trans. Geosci. Remote. Sens.",
-    "IEEE J. Sel. Top. Appl. Earth Obs. Remote. Sens.",
-    "Future Gener. Comput. Syst.",
-    "Pattern Recognit.",
-    "IEEE Trans. Neural Networks Learn. Syst.",
-    "Neural Networks"
-]
-
 
 class GG(Graph):
     def filter_publications(self, publications):
         publications = filter_publications_by_keywords(publications, keywords)
         publications = filter_publications_after(publications, 2020)
-        publications = filter_publications_by_journals(publications, journals_CCF_A + journals_CCF_B + journals_SCI_Q1)
+        publications = filter_publications_by_journals(publications, CCF_A + CCF_B)
         return publications
 
 
@@ -108,6 +55,7 @@ async def main():
     summary = g.networkx_summary()
     summary = networkx_drop_noob_once(summary, filter_min_publications=4)
     summary = networkx_drop_thin_edge(summary, filter_min_publications=2)
+    pprint(dropped)
     with open("summary.json", 'w', encoding='utf8') as f:
         json.dump(summary_to_json(summary), fp=f, cls=JSONEncoder, indent=2)
     with open("summary.json", 'r', encoding='utf8') as fr:

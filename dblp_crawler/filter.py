@@ -32,12 +32,16 @@ def filter_publications_by_keys(publications, keys: [str]):
             yield publication
 
 
+dropped = set()
+
+
 def filter_publications_by_journals(publications, journals: [str]):
     for publication in publications:
         if publication.journal() in journals:
             yield publication
         else:
-            logger.info("Dropped: %s" % publication.journal())
+            logger.debug("Dropped: %s" % publication.journal())
+            dropped.add(publication.journal())
 
 
 def count_cooperators(publications):
