@@ -44,5 +44,21 @@
   "International Conference on Algorithms and Architectures for Parallel Processing": "18 ICA3PP  International Conference on Algorithms and Architectures forParallel Processing  IEEE  http://dblp.uni -trier.de/db/conf/ica3pp/",
   "Wireless Communications and Mobile Computing": "9 WCMC  Wireless Communications & Mobile Computing  Wiley.  http://dblp.uni -trier.de/db/journals/wicomm/",
   "Computer Vision and Pattern Recognition": "4 CVPR  IEEE Conference on ComputerVision and Pattern Recognition  IEEE  http://dblp.uni -trier.de/db/conf/cvpr/",
-  "IEEE Transactions on Geoscience and Remote Sensing": "5 TGARS  IEEE Transactions on Geoscience andRemote Sensing  IEEE  http://dblp.uni -trier.de/db/journals/tgrs/"
+  "IEEE Transactions on Geoscience and Remote Sensing": "5 TGARS  IEEE Transactions on Geoscience andRemote Sensing  IEEE  http://dblp.uni -trier.de/db/journals/tgrs/",
+  "AAAI": "1 AAAI  AAAI Conference on ArtificialIntelligence  AAAI  http://dblp.uni -trier.de/db/conf/aaai/",
+  "Computer Networks": "4 CN  Computer Networks  Elsevier  http://dblp.uni -trier.de/db/journals/cn/",
+  "Knowledge Based Systems": "25 KBS  Knowledge -Based Systems  Elsevier  http://dblp.uni -trier.de/db/journals/kbs/",
+  "IEEE Transactions on Neural Networks [and Learning Systems]": "13 TNNLS  IEEE Transactions on Neural Networks andlearning systems  IEEE  http://dblp.uni -trier.de/db/journals/tnn/",
+  "Modeling Analysis and Simulation of Wireless and Mobile Systems": "17 MSWiM  International Conference on Modeling, Analysis and Simulation ofWireless and Mobile Systems  ACM  http://dblp.uni -trier.de/db/conf/mswim/",
+  "IEEE/ACM Transactions on Audio, Speech and Language Processing": "9 TASLP  IEEE Transactions on Audio, Speech, andLanguage Processing  IEEE  http://dblp.uni -trier.de/db/journals/taslp/",
+  "ACM Transactions on Multimedia Computing, Communications, and Applications": "2 TOMCCAP  ACM Transactions on Multimedia Computing,Communications and Applications  ACM  http://dblp.uni -trier.de/db/journals/tomccap/",
+  "IEEE Transactions on Network and Service Management": "3 TNSM  IEEE Transactions on Network and ServiceManagement  IEEE  http://dblp.uni -trier.de/db/journals/tnsm/",
+  "IEEE Transactions on Services Computing": "3 TSC  IEEE Transactions on Service Computing  IEEE  http://dblp.uni -trier.de/db/journals/tsc/",
+  "IEEE International Symposium on Circuits and Systems": "22 ISCAS  International Symposium on Circuits and Systems  IEEE  http://dblp.uni -trier.de/db/conf/iscas/",
+  "Conference on Multimedia Modeling": "10 MMM  International Conference on MultimediaModeling  Springer  http://dblp.uni -trier.de/db/conf/mmm/index.html",
+  "ACM Multimedia": "1 ACM MM  ACM International Conference on Multimedia  ACM  http://dblp.uni -trier.de/db/conf/mm/",
+  "IEEE Transactions on Pattern Analysis and Machine Intelligence (TPAMI)": "2 TPAMI  IEEE Trans on Pattern Analysis and MachineIntelligence  IEEE  http://dblp.uni -trier.de/db/journals/pami/",
+  "International Conference on Pattern Recognition (ICPR)": "17 ICPR  International Conference on PatternRecognition  IEEE  http://dblp.uni -trier.de/db/conf/icpr/",
+  "Mobile Adhoc and Sensor Systems - MASS": "8 MASS  IEEE International Conference on Mobile Ad -hoc and Sensor Systems  IEEE  http://dblp.uni -trier.de/db/conf/mass/index.html",
+  "Mobile Networks and Applications (MONET)": "6 MONET  Mobile Networks & Applications  Springer  http://dblp.uni -trier.de/db/journals/monet/"
 }

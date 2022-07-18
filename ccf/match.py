@@ -51,10 +51,19 @@ def LCS(str1, str2):
     return res
 
 
+freezed = {}
+try:
+    with open("matched_edited.json", 'r', encoding='utf8') as f:
+        freezed = json.load(f)
+except:
+    print("matched_edited.json not exists")
+
 mdata = a + b + c
 matched = {}
 confused = {}
 for j in data:
+    if j in freezed:
+        continue
     max_length = 0
     max_strs = []
     for m in mdata:
