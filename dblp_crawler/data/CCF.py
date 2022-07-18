@@ -1,5 +1,8 @@
-CCF_A = []
-CCF_B = []
+from .ccf import *
+
+CCF_A = list(CCF_A)
+CCF_B = list(CCF_B)
+CCF_C = list(CCF_C)
 # 期刊：计算机体系结构/并行与分布计算/存储系统
 CCF_A += [
     "ACM Trans. Comput. Syst.",
@@ -159,3 +162,7 @@ CCF_C = [
     "Knowl. Based Syst.",
     "Neurocomputing"
 ]
+
+CCF_A = set(CCF_A)
+CCF_B = set(CCF_B)
+CCF_C = set(CCF_C)

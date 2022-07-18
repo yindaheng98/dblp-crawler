@@ -35,7 +35,7 @@ class GG(Graph):
     def filter_publications(self, publications):
         publications = filter_publications_by_keywords(publications, keywords)
         publications = filter_publications_after(publications, 2020)
-        publications = filter_publications_by_journals(publications, set.union(CCF_A, CCF_B))
+        publications = filter_publications_by_journals(publications, set.union(CCF_A))
         return publications
 
 
@@ -55,7 +55,7 @@ async def main():
     summary = g.networkx_summary()
     summary = networkx_drop_noob_once(summary, filter_min_publications=4)
     summary = networkx_drop_thin_edge(summary, filter_min_publications=2)
-    pprint(all_journal)
+    pprint(dropped_journal)
     with open("summary.json", 'w', encoding='utf8') as f:
         json.dump(summary_to_json(summary), fp=f, cls=JSONEncoder, indent=2)
     with open("summary.json", 'r', encoding='utf8') as fr:
