@@ -1,6 +1,6 @@
-from .list import CCF_A as a
-from .list import CCF_B as b
-from .list import CCF_C as c
+from .raw import CCF_A as a
+from .raw import CCF_B as b
+from .raw import CCF_C as c
 from .matched import data as matched
 
 CCF_A = set()
