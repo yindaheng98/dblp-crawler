@@ -34,8 +34,11 @@ async def download_person(pid: str):
                 await f.write(html)
             return data
 
+cache = {}
 
 async def get_journal_full(pid: str):
+    if pid in cache:
+        return cache[pid]
     pid = os.path.dirname(pid) + "/index.xml"
     save_path = os.path.join("save", pid)
     if os.path.isfile(save_path):
@@ -44,7 +47,8 @@ async def get_journal_full(pid: str):
                 logger.debug("use cache: %s" % save_path)
                 html = await f.read()
                 data = ElementTree.fromstring(html)
-                return data.attrib['title']
+                cache[pid] = data.attrib['title']
+                return cache[pid]
         except:
             logger.debug(" no cache: %s" % save_path)
 
@@ -60,4 +64,5 @@ async def get_journal_full(pid: str):
             os.makedirs(os.path.dirname(save_path), exist_ok=True)
             async with async_open(save_path, 'w') as f:
                 await f.write(html)
-            return data.attrib['title']
+            cache[pid] = data.attrib['title']
+            return cache[pid]
