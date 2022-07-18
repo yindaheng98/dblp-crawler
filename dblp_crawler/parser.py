@@ -117,7 +117,7 @@ class Author:
 class JSONEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, DBLPPerson):
-            return str(obj.person())
+            return obj.pid() + "\n" + str(obj.person())
         if isinstance(obj, Publication):
             return str(obj)
         return json.JSONEncoder.default(self, obj)
