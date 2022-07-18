@@ -77,7 +77,10 @@ for j in data:
     if len(j) == max_length == max_lcs and len(max_lcss) == 1:
         matched[j] = max_lcss[0]
     else:
-        confused[j] = max_lcss
+        for m in max_lcss:
+            if m not in confused:
+                confused[m] = []
+            confused[m].append(j)
 
 import json
 
