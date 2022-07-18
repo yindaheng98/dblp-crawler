@@ -2,7 +2,7 @@ import asyncio
 import json
 import logging
 import xml.etree.ElementTree as ElementTree
-from .downloader import download_person
+from .downloader import *
 
 logger = logging.getLogger("parser")
 
@@ -79,6 +79,11 @@ class Publication:
         for child in self.data:
             if self.data.tag in tag and child.tag == tag[self.data.tag]:
                 return child.text
+
+    async def journal_full_name(self):
+        for child in self.data:
+            if child.tag == "url":
+                return await get_journal_full(child.text)
 
     def year(self):
         for child in self.data:
