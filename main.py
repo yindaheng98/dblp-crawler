@@ -1,7 +1,7 @@
 from pprint import pprint
 
 from dblp_crawler import *
-from dblp_crawler.data.CCF import CCF_A, CCF_B
+from dblp_crawler.data import CCF_A, CCF_B
 
 keywords = [
     r"video.+delivery",
@@ -35,7 +35,7 @@ class GG(Graph):
     def filter_publications(self, publications):
         publications = filter_publications_by_keywords(publications, keywords)
         publications = filter_publications_after(publications, 2020)
-        publications = filter_publications_by_journals(publications, CCF_A + CCF_B)
+        publications = filter_publications_by_journals(publications, set.union(CCF_A, CCF_B))
         return publications
 
 
