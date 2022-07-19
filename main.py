@@ -45,7 +45,14 @@ blacklist = [
 
 
 class GG(Graph):
-    def filter_publications(self, publications):
+    def filter_publications_at_crawler(self, publications):
+        publications = filter_publications_by_keywords(publications, keywords)
+        publications = filter_publications_after(publications, 2019)
+        publications = filter_publications_by_journals(publications, CCF_A + CCF_B)
+        publications = drop_publications_by_journals(publications, blacklist)
+        return publications
+
+    def filter_publications_at_output(self, publications):
         publications = filter_publications_by_keywords(publications, keywords)
         publications = filter_publications_after(publications, 2020)
         publications = filter_publications_by_journals(publications, CCF_A)
