@@ -21,7 +21,7 @@ def filter_publications_by_author(publications, pid: str):
 def filter_publications_by_keywords(publications, keywords: [str]):
     for publication in publications:
         for keyword in keywords:
-            if re.search(keyword.lower(), publication.title().lower()) is not None:
+            if re.search(keyword, publication.title().lower()) is not None:
                 yield publication
                 break
 
@@ -42,6 +42,18 @@ def filter_publications_by_journals(publications, journals: [str]):
         full_name = publication.journal()
         all_journal.add(full_name)
         if publication.journal_key() in journals:
+            keepped_journal.add(full_name)
+            yield publication
+        else:
+            logger.debug("Dropped: %s" % publication.journal())
+            dropped_journal.add(publication.journal())
+
+
+def drop_publications_by_journals(publications, journals: [str]):
+    for publication in publications:
+        full_name = publication.journal()
+        all_journal.add(full_name)
+        if full_name not in journals:
             keepped_journal.add(full_name)
             yield publication
         else:
