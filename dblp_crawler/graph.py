@@ -15,7 +15,12 @@ class Graph(metaclass=abc.ABCMeta):
         self.publications = {}
 
     @abc.abstractmethod
-    def filter_publications(self, publications):
+    def filter_publications_at_crawler(self, publications):  # 在爬虫阶段过滤
+        for publication in publications:
+            yield publication
+
+    @abc.abstractmethod
+    def filter_publications_at_output(self, publications):  # 在输出阶段过滤
         for publication in publications:
             yield publication
 
@@ -34,7 +39,7 @@ class Graph(metaclass=abc.ABCMeta):
             if pid in self.checked:
                 continue  # 已经遍历过的节点不再重复
             self.checked.add(pid)  # 记录下这个节点已遍历
-            for publication in self.filter_publications(person.publications()):
+            for publication in self.filter_publications_at_crawler(person.publications()):
                 if publication.key() in self.publications:
                     continue  # 已经遍历过的文章不再重复
                 self.publications[publication.key()] = publication  # 记录下这个文章已遍历
@@ -51,7 +56,7 @@ class Graph(metaclass=abc.ABCMeta):
         for pid, person in self.persons.items():  # 遍历所有作者
             g.add_node(pid, person=person)  # 把作者信息加进图里
 
-        for _, publication in self.publications.items():  # 遍历所有文章
+        for publication in self.filter_publications_at_output(self.publications.values()):  # 遍历所有文章
             authors_pid = {author.pid() for author in publication.authors()}  # 获取作者列表
             for a, b in combinations(authors_pid, 2):  # 列表中的作者两两之间形成边
                 if a == b:
