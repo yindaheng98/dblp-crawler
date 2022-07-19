@@ -44,20 +44,38 @@ class GG(Graph):
 
 async def main():
     init = [
-        '74/1552-1',  # 清深江勇
-        '02/894',  # 北大王选计算机研究所郭宗明
-        's/JunSun12',  # 北大王选计算机研究所孙俊
+        # 清华大学深圳研究院
+        '74/1552-1',  # 清深 江勇
+        '95/6543',  # 清华 王智
+
+        # 数字视频编解码技术国家工程实验室
+        'g/WenGao',  # 实验室主任 北大 高文院士
+        '40/5402',  # 北大 马思伟
+        '12/7627-1',  # 计算所 张新峰 副教授
+        '126/4540',  # 北大 王苫社 副研究员
+        '156/2359',  # 北大王选计算机研究所 杨文瀚
+        '02/894',  # 北大王选计算机研究所 郭宗明
+        's/JunSun12',  # 北大王选计算机研究所 孙俊
+        # 另有大量合作者在香港城市大学
+
+        # 港中文、港大、南阳理工 多媒体联合实验室 http: // mmlab.ie.cuhk.edu.hk/people.html
+        '54/4989-2',  # 香港大学 罗平 http://luoping.me
+        '01/5855',  # 南洋理工 吕健勤 模型研究方向
+        '16/1278',  # 中科院深圳先进技术研究所 董超, 2016年博士毕业 http://xpixel.group/people.html
+
+        # 待整理
+        '142/0351',  # 港中文 Fangxin Wang https://mypage.cuhk.edu.cn/academics/wangfangxin/index.html
+        '02/2683',  # 北大 宋令阳 电子学院
+        '23/1818',  # 中科大 Zheng-Jun Zha
         '94/3601',  # 中科大肖明军
-        # '96/2572'  # 南京大学软件学院 Zhuzhong Qian
         '06/2128',  # 孙立峰 清华大学计算机科学与技术系
         '38/2763',  # 王生进
         '78/1467-1',  # 华为 Qi Tian
-        '01/5855',  # 南洋理工 模型研究方向
-        '16/1278',  # Chao Dong 中科院深圳先进技术研究所 http://xpixel.group/people.html
         'q/YuQiao1',  # Yu Qiao
+        '38/559',  # 北大刘云淮
     ]
     g = GG(init)
-    for i in range(3):
+    for i in range(8):
         await g.bfs_once()
     summary = g.networkx_summary()
     summary = networkx_drop_noob_once(summary, filter_min_publications=3)
