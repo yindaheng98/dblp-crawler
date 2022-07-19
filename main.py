@@ -57,6 +57,7 @@ async def main():
         '02/894',  # 北大王选计算机研究所 郭宗明
         's/JunSun12',  # 北大王选计算机研究所 孙俊
         # 另有大量合作者在香港城市大学
+        # https://www.zhihu.com/question/22814279/answer/1798183969
 
         # 港中文、港大、南阳理工 多媒体联合实验室 http: // mmlab.ie.cuhk.edu.hk/people.html
         '54/4989-2',  # 香港大学 罗平 http://luoping.me
