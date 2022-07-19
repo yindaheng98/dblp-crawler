@@ -75,7 +75,7 @@ async def main():
         'q/YuQiao1',  # Yu Qiao
     ]
     g = GG(init)
-    for i in range(7):
+    for i in range(16):
         await g.bfs_once()
     summary = g.networkx_summary()
     summary = networkx_drop_noob_once(summary, filter_min_publications=3)
@@ -90,7 +90,7 @@ async def main():
                 node['color'] = 'red'
         with open("summary.js", 'w', encoding='utf8') as fw:
             fw.write("let data = " + json.dumps(j))
-    draw_summary(summary)
+    # draw_summary(summary)
 
 
 if __name__ == "__main__":
