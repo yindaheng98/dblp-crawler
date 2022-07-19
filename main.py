@@ -2,50 +2,34 @@ from pprint import pprint
 
 from dblp_crawler import *
 from dblp_crawler.data import CCF_A, CCF_B
-from itertools import permutations
+from dblp_crawler.keyword import *
 
-
-def no_order(*args):
-    return [re.compile(".+".join(a)) for a in permutations(args)]
-
-
-def word(arg):
-    return [
-        re.compile(" " + arg + "$"),
-        re.compile("^" + arg + " "),
-        re.compile(" " + arg + " ")
-    ]
-
-
-keywords_at_crawler = [
-    r"video",
-    r"streaming",
-    r"in-network",
-    *word('hdr'),
-    r"super.+resolution",
-    r"edge"
-]
-
-keywords_at_output = [
-    *no_order("video", "streaming"),
-    *no_order("video", "delivery"),
-    *no_order("video", "caching"),
-    *no_order("video", "quality"),
-    *no_order("video", "coding"),
-    *no_order("video", "communication"),
-    *no_order("video", "denoising"),
-    *no_order("video", "restoration"),
-    *no_order("360", "video"),
-    *no_order("vr", "video"),
-    *no_order("content", "aware", "video"),
-    *no_order("neural", "video"),
-    r"super.+resolution",
-    *word('dash'),
-    r"in-network",
-    *no_order('mec', "video"),
-    *no_order('edge', "video"),
-    *word('hdr'),
-]
+keywords = Keywords()
+keywords.add_list_of_no_order_words(
+    ("video", "streaming"),
+    ("video", "live"),
+    ("live", "streaming"),
+    ("video", "delivery"),
+    ("video", "caching"),
+    ("video", "quality"),
+    ("video", "coding"),
+    ("video", "communication"),
+    ("video", "denoising"),
+    ("video", "deblur"),
+    ("video", "restoration"),
+    ("video", "enhancement"),
+    ("video", "interpolation"),
+    ("360", "video"),
+    ("vr", "video"),
+    ("content", "aware", "video"),
+    ("neural", "video"),
+    ("super", "resolution"),
+    ('mec', "video"),
+    ('edge', "video"),
+)
+keywords.add_list_of_single_word(
+    'hdr', 'uhd', 'in-network', 'dash'
+)
 
 blacklist = [
     "CVPR Workshops"
@@ -54,14 +38,14 @@ blacklist = [
 
 class GG(Graph):
     def filter_publications_at_crawler(self, publications):
-        publications = filter_publications_by_keywords(publications, keywords_at_crawler)
+        publications = filter_publications_by_keywords(publications, keywords.no_strict())
         publications = filter_publications_after(publications, 2019)
         publications = filter_publications_by_journals(publications, CCF_A + CCF_B)
         publications = drop_publications_by_journals(publications, blacklist)
         return publications
 
     def filter_publications_at_output(self, publications):
-        publications = filter_publications_by_keywords(publications, keywords_at_output)
+        publications = filter_publications_by_keywords(publications, keywords.strict())
         publications = filter_publications_after(publications, 2020)
         publications = filter_publications_by_journals(publications, CCF_A)
         publications = drop_publications_by_journals(publications, blacklist)
@@ -83,7 +67,7 @@ async def main():
         'q/YuQiao1',  # Yu Qiao
     ]
     g = GG(init)
-    for i in range(16):
+    for i in range(6):
         await g.bfs_once()
     summary = g.networkx_summary()
     summary = networkx_drop_noob_once(summary, filter_min_publications=3)
@@ -104,6 +88,6 @@ async def main():
 if __name__ == "__main__":
     import logging
 
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())
