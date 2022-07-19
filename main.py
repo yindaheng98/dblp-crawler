@@ -57,7 +57,7 @@ async def main():
         'q/YuQiao1',  # Yu Qiao
     ]
     g = GG(init)
-    for i in range(2):
+    for i in range(3):
         await g.bfs_once()
     summary = g.networkx_summary()
     summary = networkx_drop_noob_once(summary, filter_min_publications=3)
@@ -78,6 +78,6 @@ async def main():
 if __name__ == "__main__":
     import logging
 
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())
