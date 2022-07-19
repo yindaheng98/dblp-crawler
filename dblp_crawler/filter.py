@@ -24,6 +24,8 @@ def filter_publications_by_keywords(publications, keywords: [str]):
             if re.search(keyword, publication.title().lower()) is not None:
                 yield publication
                 break
+        else:
+            logger.debug("Dropped: %s" % publication.title())
 
 
 def filter_publications_by_keys(publications, keys: [str]):
