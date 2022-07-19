@@ -52,15 +52,13 @@ class Graph(metaclass=abc.ABCMeta):
 
     def networkx(self):
         g = nx.MultiGraph()
-
-        for pid, person in self.persons.items():  # 遍历所有作者
-            g.add_node(pid, person=person)  # 把作者信息加进图里
-
         for publication in self.filter_publications_at_output(self.publications.values()):  # 遍历所有文章
             authors_pid = {author.pid() for author in publication.authors()}  # 获取作者列表
             for a, b in combinations(authors_pid, 2):  # 列表中的作者两两之间形成边
                 if a == b:
                     continue
+                g.add_node(a, person=self.persons[a])  # 把作者信息加进图里
+                g.add_node(b, person=self.persons[b])  # 把作者信息加进图里
                 g.add_edge(a, b, key=publication.key(), publication=publication)  # 把边加进图里
 
         return g

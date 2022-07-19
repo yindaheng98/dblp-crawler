@@ -17,26 +17,34 @@ def word(arg):
     ]
 
 
-keywords = [
-    *no_order("video", "delivery"),
+keywords_at_crawler = [
+    r"video",
+    r"streaming",
+    r"in-network",
+    *word('hdr'),
+    r"super.+resolution",
+    r"edge"
+]
+
+keywords_at_output = [
     *no_order("video", "streaming"),
+    *no_order("video", "delivery"),
     *no_order("video", "caching"),
     *no_order("video", "quality"),
     *no_order("video", "coding"),
-    r"super.+resolution",
-    *word('dash'),
-    *no_order("360", "video"),
-    *no_order("vr", "video"),
     *no_order("video", "communication"),
     *no_order("video", "denoising"),
     *no_order("video", "restoration"),
+    *no_order("360", "video"),
+    *no_order("vr", "video"),
     *no_order("content", "aware", "video"),
     *no_order("neural", "video"),
+    r"super.+resolution",
+    *word('dash'),
     r"in-network",
-    *word('mec'),
+    *no_order('mec', "video"),
+    *no_order('edge', "video"),
     *word('hdr'),
-    r"edge.+comput",
-    r"edge-based",
 ]
 
 blacklist = [
@@ -46,14 +54,14 @@ blacklist = [
 
 class GG(Graph):
     def filter_publications_at_crawler(self, publications):
-        publications = filter_publications_by_keywords(publications, keywords)
+        publications = filter_publications_by_keywords(publications, keywords_at_crawler)
         publications = filter_publications_after(publications, 2019)
         publications = filter_publications_by_journals(publications, CCF_A + CCF_B)
         publications = drop_publications_by_journals(publications, blacklist)
         return publications
 
     def filter_publications_at_output(self, publications):
-        publications = filter_publications_by_keywords(publications, keywords)
+        publications = filter_publications_by_keywords(publications, keywords_at_output)
         publications = filter_publications_after(publications, 2020)
         publications = filter_publications_by_journals(publications, CCF_A)
         publications = drop_publications_by_journals(publications, blacklist)
