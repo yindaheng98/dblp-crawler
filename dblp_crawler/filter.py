@@ -1,5 +1,6 @@
 import re
 import logging
+from typing import Callable
 
 logger = logging.getLogger("downloader")
 
@@ -24,6 +25,14 @@ def filter_publications_by_keywords(publications, keywords: [str]):
             if re.search(keyword, publication.title().lower()) is not None:
                 yield publication
                 break
+        else:
+            logger.debug("Dropped: %s" % publication.title())
+
+
+def filter_publications_by_title_with_func(publications, func: Callable[(str), bool]):
+    for publication in publications:
+        if func(publication.title()):
+                yield publication
         else:
             logger.debug("Dropped: %s" % publication.title())
 

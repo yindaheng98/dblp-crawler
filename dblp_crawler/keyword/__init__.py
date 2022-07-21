@@ -1,32 +1,44 @@
 import re
-from itertools import permutations
 
 
 class Keywords:
     def __init__(self):
-        self.rule_strict = set()
-        self.rule_no_strict = set()
+        self.rules = set()
+        self.words = set()
 
-    def add_no_order_words(self, *args):
-        self.rule_strict = self.rule_strict.union(set(re.compile(".+".join(a)) for a in permutations(args)))
-        self.rule_no_strict = self.rule_no_strict.union(set(args))
+    def add_rule(self, *rule: str):
+        """与关系的单词列"""
+        rule = frozenset(word.lower() for word in rule)
+        self.rules.add(rule)
+        self.words = self.words.union(rule)
 
-    def add_list_of_no_order_words(self, *lists):
-        for args in lists:
-            self.add_no_order_words(*args)
+    def add_rule_list(self, *rule_list: set[str]):
+        """多个与关系的单词列"""
+        for rule in rule_list:
+            self.add_rule(*rule)
 
-    def add_single_word(self, word):
-        self.rule_strict.add(re.compile(" " + word + "$"))
-        self.rule_strict.add(re.compile("^" + word + " "))
-        self.rule_strict.add(re.compile(" " + word + " "))
-        self.rule_no_strict.add(word)
+    def add_word_rules(self, *words: str):
+        self.add_rule_list(*list((word, ) for word in words))
 
-    def add_list_of_single_word(self, *words):
-        for word in words:
-            self.add_single_word(word)
+    def match(self, sentence):
+        sentence = sentence.lower()
+        words = set(re.findall(r"\w+", sentence))
+        for rule in self.rules:
+            if rule.issubset(words):
+                return True
+        return False
 
-    def strict(self):
-        return self.rule_strict
+    def match_words(self, sentence):
+        sentence = sentence.lower()
+        return len(set(re.findall(r"\w+", sentence)).intersection(self.words)) > 0
 
-    def no_strict(self):
-        return self.rule_no_strict
+
+if __name__ == "__main__":
+    kw = Keywords()
+    kw.add_rule_list(("super", "resolution"), ("content", "aware"))
+    kw.add_rule("video")
+    kw.add_rule("edge", "computing")
+    print(kw.match("An adaptive clustering-based evolutionary algorithm for many-objective optimization problems"))
+    print(kw.match("Multi-resolution representation with recurrent neural networks application for streaming time series in IoT"))
+    print(kw.match("High-Definition Video Compression System Based on Perception Guidance of Salient Information of a Convolutional Neural Network and HEVC Compression Domain"))
+    print(kw.match("Resource Provision and Allocation Based on Microeconomic Theory in Mobile Edge Computing"))
