@@ -78,7 +78,7 @@ async def main():
         '38/559',  # 北大刘云淮
     ]
     g = GG(init)
-    for i in range(4):
+    for i in range(2):
         await g.bfs_once()
     summary = g.networkx_summary()
     summary = networkx_drop_noob_once(summary, filter_min_publications=3)
@@ -93,6 +93,7 @@ async def main():
                 node['color'] = 'red'
         with open("summary.js", 'w', encoding='utf8') as fw:
             fw.write("let data = " + json.dumps(j))
+    dump_papers_in_summary(summary, "papers.txt")
     # draw_summary(summary)
 
 
