@@ -6,20 +6,22 @@ from dblp_crawler.data import CCF_A, CCF_B
 from dblp_crawler.keyword import *
 
 keywords = Keywords()
-keywords.add_list_of_no_order_words(
+keywords.add_rule_list(
     *list(product(
         {"video", "live", "stream"},
-        {"video", "live", "stream", "delivery", "caching", "communication",
+        {"delivery", "caching", "communication",
          "quality", "code", "coding", "adaptive",
          "denoising", "deblur", "dehaz", "restoration", "enhancement", "interpolation", "inpaint",
          "360", "vr", 'mec', 'edge', "neural"}
     )),
+    *list(product(
+        {"video"},
+        {"live", "stream"}
+    )),
     ("content", "aware"),
     ("super", "resolution"),
 )
-keywords.add_list_of_single_word(
-    'hdr', 'uhd', 'in-network', 'dash'
-)
+keywords.add_word_rules('hdr', 'uhd', 'in-network', 'dash')
 
 blacklist = [
     "CVPR Workshops"
@@ -30,14 +32,14 @@ class GG(Graph):
     def filter_publications_at_crawler(self, publications):
         publications = filter_publications_after(publications, 2019)
         publications = filter_publications_by_journals(publications, CCF_A + CCF_B)
-        publications = filter_publications_by_keywords(publications, keywords.no_strict())
+        publications = filter_publications_by_title_with_func(publications, keywords.match_words)
         publications = drop_publications_by_journals(publications, blacklist)
         return publications
 
     def filter_publications_at_output(self, publications):
         publications = filter_publications_after(publications, 2020)
         publications = filter_publications_by_journals(publications, CCF_A)
-        publications = filter_publications_by_keywords(publications, keywords.strict())
+        publications = filter_publications_by_title_with_func(publications, keywords.match)
         publications = drop_publications_by_journals(publications, blacklist)
         return publications
 
@@ -76,7 +78,7 @@ async def main():
         '38/559',  # 北大刘云淮
     ]
     g = GG(init)
-    for i in range(8):
+    for i in range(4):
         await g.bfs_once()
     summary = g.networkx_summary()
     summary = networkx_drop_noob_once(summary, filter_min_publications=3)
