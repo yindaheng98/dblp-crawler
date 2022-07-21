@@ -11,6 +11,7 @@ logger = logging.getLogger("downloader")
 http_sem = Semaphore(4)
 file_sem = Semaphore(64)
 
+
 async def download_person(pid: str):
     save_path = os.path.join("save", pid + ".xml")
     if os.path.isfile(save_path):
@@ -39,7 +40,9 @@ async def download_person(pid: str):
         except Exception as e:
             logger.error("invalid response: %s" % e)
 
+
 cache = {}
+
 
 async def get_journal_full(pid: str):
     if pid in cache:

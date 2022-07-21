@@ -32,7 +32,7 @@ def filter_publications_by_keywords(publications, keywords: [str]):
 def filter_publications_by_title_with_func(publications, func: Callable[(str), bool]):
     for publication in publications:
         if func(publication.title()):
-                yield publication
+            yield publication
         else:
             logger.debug("Dropped: %s" % publication.title())
 
