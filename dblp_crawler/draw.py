@@ -32,3 +32,10 @@ def summary_to_json(g: nx.Graph):
         for u, v, d in g.edges(data=True)
     ]
     return {"nodes": nodes, "edges": edges}
+
+def dump_papers_in_summary(g: nx.Graph, path):
+    with open(path, 'w', encoding="utf8") as f:
+        for _, d in g.nodes(data=True):
+            for publication in d['publications']:
+                f.write(str(publication))
+                f.write("\n")
