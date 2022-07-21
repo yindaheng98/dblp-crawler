@@ -8,18 +8,19 @@ from dblp_crawler.keyword import *
 keywords = Keywords()
 keywords.add_rule_list(
     *list(product(
-        {"video", "live", "stream"},
-        {"delivery", "caching", "communication",
-         "quality", "code", "coding", "adaptive",
-         "denoising", "deblur", "dehaz", "restoration", "enhancement", "interpolation", "inpaint",
-         "360", "vr", 'mec', 'edge', "neural"}
+        {"video", "live", "stream", "streaming"},
+        {"delivery", "deliver", "cached", "cache", "caching", "communication", "communicate",
+         "quality", "code", "coding", "adaptive", "adaption",
+         "denoising", "denoise", "deblur", "deblurring", "dehaze", "dehazing",
+         "restoration", "restore", "enhance", "enhancement", "interpolation", "interpolate", "inpaint", "inpainting",
+         "360", "vr", 'mec', 'edge', "neural", "fog"}
     )),
     *list(product(
         {"video"},
-        {"live", "stream"}
+        {"live", "stream", "streaming"}
     )),
-    ("content", "aware"),
-    ("super", "resolution"),
+    {"content", "aware"},
+    {"super", "resolution"},
 )
 keywords.add_word_rules('hdr', 'uhd', 'in-network', 'dash')
 
@@ -68,7 +69,7 @@ async def main():
 
         # 待整理
         '142/0351',  # 港中文 Fangxin Wang https://mypage.cuhk.edu.cn/academics/wangfangxin/index.html
-        '02/2683',  # 北大 宋令阳 电子学院
+        '02/2683',  # 北大 宋令阳 电子学院 电子学院主要是研究通信和物理的，这位教授在这个学院似乎有点偏？
         '23/1818',  # 中科大 Zheng-Jun Zha
         '94/3601',  # 中科大肖明军
         '06/2128',  # 孙立峰 清华大学计算机科学与技术系
@@ -78,7 +79,7 @@ async def main():
         '38/559',  # 北大刘云淮
     ]
     g = GG(init)
-    for i in range(2):
+    for i in range(6):
         await g.bfs_once()
     summary = g.networkx_summary()
     summary = networkx_drop_noob_once(summary, filter_min_publications=3)
