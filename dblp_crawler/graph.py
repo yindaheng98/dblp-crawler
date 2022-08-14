@@ -124,11 +124,14 @@ if __name__ == "__main__":
 
 
     class GG(Graph):
-        def filter_publications(self, publications):
+        def filter_publications_at_crawler(self, publications):
             publications = list(publications)
             publication = publications[random.randint(0, len(publications) - 1)]
             print(len(list(publication.authors())))
             yield publication
+
+        def filter_publications_at_output(self, publications):
+            return self.filter_publications_at_crawler(publications)
 
 
     async def main():
