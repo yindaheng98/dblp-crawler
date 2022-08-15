@@ -2,17 +2,28 @@ import asyncio
 import abc
 import logging
 from itertools import combinations
-from dblp_crawler import download_person, DBLPPerson
+from dblp_crawler import download_person, DBLPPerson, download_journal_list, JournalList
 import networkx as nx
 
 logger = logging.getLogger("graph")
 
 
 class Graph(metaclass=abc.ABCMeta):
-    def __init__(self, pid_list: [str]):
+    def __init__(self, pid_list: [str], journal_list: [str]):
         self.persons = {pid: None for pid in pid_list}
         self.checked = set()
         self.publications = {}
+        self.init_journals = journal_list
+        self.journals_inited = False
+
+    async def init_persons_from_journals(self):
+        for jid in self.init_journals:
+            jl = JournalList(await download_journal_list(jid))
+            async for journal in jl.journals():
+                for publication in self.filter_publications_at_crawler(journal.publications()):
+                    for author in publication.authors():
+                        if author.pid() not in self.persons:
+                            self.persons[author.pid()] = None
 
     @abc.abstractmethod
     def filter_publications_at_crawler(self, publications):  # 在爬虫阶段过滤
@@ -31,6 +42,8 @@ class Graph(metaclass=abc.ABCMeta):
         self.persons[pid] = DBLPPerson(data)
 
     async def bfs_once(self):
+        if not self.journals_inited:
+            await self.init_persons_from_journals()
         tasks = []
         for pid, person in list(self.persons.items()):
             if person is None:

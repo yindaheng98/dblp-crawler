@@ -1,6 +1,7 @@
 import logging
 import xml.etree.ElementTree as ElementTree
-from dblp_crawler import Publication
+from .parser import Publication
+from .downloader import download_journal
 
 logger = logging.getLogger("parser")
 
@@ -37,7 +38,7 @@ class Journal:
 
 if __name__ == "__main__":
     import asyncio
-    from dblp_crawler import download_journal, download_journal_list
+    from dblp_crawler import download_journal_list
 
 
     async def main():
