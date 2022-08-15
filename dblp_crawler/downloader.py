@@ -1,3 +1,4 @@
+import re
 import os.path
 import xml.etree.ElementTree as ElementTree
 
@@ -18,6 +19,10 @@ async def download_person(pid: str):
 
 async def download_journal_list(pid: str):
     return await download_item(pid + "/index.xml")
+
+
+async def download_journal(pid: str):
+    return await download_item(re.sub(r"\.html$", ".xml", pid))
 
 
 async def download_item(path: str):
