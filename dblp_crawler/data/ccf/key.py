@@ -21,6 +21,12 @@ CCF = 'A'
 CCF_A = [key(r) for r in CCF_A]
 CCF = 'B'
 CCF_B = [key(r) for r in CCF_B]
+CCF_B += [
+    "db/journals/pe",
+    "db/journals/tissec",
+    "db/journals/cogsci",
+    "db/conf/hotchips"
+]
 CCF = 'C'
 CCF_C = [key(r) for r in CCF_C]
 print(CCF_A)
