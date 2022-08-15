@@ -20,6 +20,11 @@ class JournalList:
         for jid in self.journal_keys():
             yield Journal(await download_journal(jid))
 
+    async def publications(self):
+        async for j in self.journals():
+            for p in j.publications():
+                yield p
+
 
 class Journal:
     def __init__(self, data: ElementTree.Element):
@@ -38,13 +43,11 @@ if __name__ == "__main__":
     async def main():
         jl = JournalList(await download_journal_list('db/journals/tmm'))
         i = 0
-        async for journal in jl.journals():
+        async for publication in jl.publications():
             i += 1
-            if i >= 3:
+            if i >= 100:
                 break
-            print(journal)
-            for publication in journal.publications():
-                print(publication)
+            print(publication)
 
 
     asyncio.run(main())
