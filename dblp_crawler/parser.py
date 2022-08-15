@@ -86,11 +86,6 @@ class Publication:
             if child.tag == "url":
                 return "/".join(child.text.split("/")[0:3])
 
-    async def journal_full_name(self):
-        for child in self.data:
-            if child.tag == "url":
-                return await get_journal_full(child.text)
-
     def year(self):
         for child in self.data:
             if child.tag == "year":
