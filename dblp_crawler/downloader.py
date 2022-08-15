@@ -5,7 +5,6 @@ import aiohttp
 import logging
 from aiofile import async_open
 from asyncio import Semaphore
-from .journal import DBLPJournal
 
 logger = logging.getLogger("downloader")
 
