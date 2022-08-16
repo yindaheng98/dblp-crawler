@@ -116,7 +116,7 @@ class Graph(metaclass=abc.ABCMeta):
             data = gg.get_edge_data(a, b)
             if data is None or "publications" not in data:
                 data = {"publications": []}
-            data["publications"].append(d)
+            data["publications"].append(publication)
             gg.add_edge(a, b, **data)
             # 把文章加进作者信息里
             if a not in authors:
@@ -170,7 +170,6 @@ if __name__ == "__main__":
         def filter_publications_at_crawler(self, publications):
             publications = list(publications)
             publication = publications[random.randint(0, len(publications) - 1)]
-            print(len(list(publication.authors())))
             yield publication
 
         def filter_publications_at_output(self, publications):
@@ -178,13 +177,19 @@ if __name__ == "__main__":
 
 
     async def main():
-        g = GG(['74/1552-1'])
+        g = GG(['74/1552-1'], [])
         await g.bfs_once()
         print("-" * 100)
         await g.bfs_once()
         print("-" * 100)
         await g.bfs_once()
         print("-" * 100)
+
+        summary = g.networkx_summary()
+        for node, data in list(summary.nodes(data=True)):
+            print(node)
+            print(data['person'])
+            print(len(data['person'].publications()))
 
         fig, ax = plt.subplots(figsize=(12, 12))
         nx.draw(g.networkx_summary(), ax=ax)
