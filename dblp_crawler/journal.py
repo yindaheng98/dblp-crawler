@@ -19,7 +19,9 @@ class JournalList:
 
     async def journals(self):
         for jid in self.journal_keys():
-            yield Journal(await download_journal(jid))
+            data = await download_journal(jid)
+            if data is not None:
+                yield Journal(data)
 
     async def publications(self):
         async for j in self.journals():
