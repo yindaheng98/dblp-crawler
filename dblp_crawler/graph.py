@@ -17,13 +17,22 @@ class Graph(metaclass=abc.ABCMeta):
         self.journals_inited = False
 
     async def init_persons_from_journals(self):
+        author_count = 0
+        publication_count = 0
         for jid in self.init_journals:
             jl = JournalList(await download_journal_list(jid))
             async for journal in jl.journals():
                 for publication in self.filter_publications_at_crawler(journal.publications()):
+                    if publication.key() in self.publications:
+                        continue  # 已经遍历过的文章不再重复
+                    self.publications[publication.key()] = publication  # 记录下这个文章已遍历
+                    publication_count += 1
+                    logger.info(str(publication))
                     for author in publication.authors():
-                        if author.pid() not in self.persons:
-                            self.persons[author.pid()] = None
+                        if author.pid() not in self.persons:  # 如果作者不存在
+                            self.persons[author.pid()] = None  # 就加入作者
+                            author_count += 1
+        logger.info("%d initial authors added from %d publications" % (author_count, publication_count))
 
     @abc.abstractmethod
     def filter_publications_at_crawler(self, publications):  # 在爬虫阶段过滤
