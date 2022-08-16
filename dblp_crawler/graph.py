@@ -106,6 +106,11 @@ class Graph(metaclass=abc.ABCMeta):
 
         return g
 
+    def summary_person(self, person, publications):  # 构建summary
+        return dict(
+            person=person, publications=list(publications.values())
+        )
+
     def networkx_summary(self):
         g = self.networkx()
         gg = nx.Graph()
@@ -126,7 +131,7 @@ class Graph(metaclass=abc.ABCMeta):
                 authors[b] = {}
             authors[b][publication.key()] = publication
         for pid, publications in authors.items():
-            gg.add_node(pid, person=g.nodes[pid]['person'], publications=list(publications.values()))
+            gg.add_node(pid, **self.summary_person(g.nodes[pid]['person'], publications))
         return gg
 
 
@@ -182,14 +187,10 @@ if __name__ == "__main__":
         print("-" * 100)
         await g.bfs_once()
         print("-" * 100)
-        await g.bfs_once()
-        print("-" * 100)
 
         summary = g.networkx_summary()
         for node, data in list(summary.nodes(data=True)):
-            print(node)
-            print(data['person'])
-            print(len(data['person'].publications()))
+            print(node, data['person'].name(), len(list(data['person'].publications())))
 
         fig, ax = plt.subplots(figsize=(12, 12))
         nx.draw(g.networkx_summary(), ax=ax)
