@@ -27,7 +27,7 @@ class Graph(metaclass=abc.ABCMeta):
                         continue  # 已经遍历过的文章不再重复
                     self.publications[publication.key()] = publication  # 记录下这个文章已遍历
                     publication_count += 1
-                    logger.info(str(publication))
+                    logger.debug(str(publication))
                     for author in publication.authors():
                         if author.pid() not in self.persons:  # 如果作者不存在
                             self.persons[author.pid()] = None  # 就加入作者
@@ -54,7 +54,17 @@ class Graph(metaclass=abc.ABCMeta):
         if not self.journals_inited:
             await self.init_persons_from_journals()
         tasks = []
+        init_author_count = 0
         for pid, person in list(self.persons.items()):
+            if person is None:
+                tasks.append(asyncio.create_task(self.download_person(pid)))
+                init_author_count += 1
+        logger.info("Initializing %d authors" % init_author_count)
+        total_author_count = 0
+        total_publication_count = 0
+        for pid, person in list(self.persons.items()):
+            author_count = 0
+            publication_count = 0
             if person is None:
                 tasks.append(asyncio.create_task(self.download_person(pid)))
                 continue  # 还没下载的节点先下载
@@ -65,12 +75,18 @@ class Graph(metaclass=abc.ABCMeta):
                 if publication.key() in self.publications:
                     continue  # 已经遍历过的文章不再重复
                 self.publications[publication.key()] = publication  # 记录下这个文章已遍历
-                logger.info(str(publication))
+                publication_count += 1
+                logger.debug(str(publication))
                 for author in publication.authors():
                     if author.pid() not in self.persons:  # 如果作者不存在
                         tasks.append(asyncio.create_task(self.download_person(author.pid())))  # 就获取作者
                         self.persons[author.pid()] = None  # 并记录之
+                        author_count += 1
+            logger.info("%d authors added from %d %s's publications" % (author_count, publication_count, pid))
+            total_author_count += author_count
+            total_publication_count += publication_count
         await asyncio.gather(*tasks)
+        logger.info("%d authors added from %d publications" % (total_author_count, total_publication_count))
 
     def networkx(self):
         g = nx.MultiGraph()
