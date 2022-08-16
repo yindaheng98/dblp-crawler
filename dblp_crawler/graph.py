@@ -53,6 +53,7 @@ class Graph(metaclass=abc.ABCMeta):
     async def bfs_once(self):
         if not self.journals_inited:
             await self.init_persons_from_journals()
+
         tasks = []
         init_author_count = 0
         for pid, person in list(self.persons.items()):
@@ -60,6 +61,9 @@ class Graph(metaclass=abc.ABCMeta):
                 tasks.append(asyncio.create_task(self.download_person(pid)))
                 init_author_count += 1
         logger.info("Initializing %d authors" % init_author_count)
+        await asyncio.gather(*tasks)
+
+        tasks = []
         total_author_count = 0
         total_publication_count = 0
         for pid, person in list(self.persons.items()):
@@ -82,9 +86,10 @@ class Graph(metaclass=abc.ABCMeta):
                         tasks.append(asyncio.create_task(self.download_person(author.pid())))  # 就获取作者
                         self.persons[author.pid()] = None  # 并记录之
                         author_count += 1
-            logger.info("%d authors added from %d %s's publications" % (author_count, publication_count, pid))
+            logger.info("there are %d authors in %d %s's publications" % (author_count, publication_count, pid))
             total_author_count += author_count
             total_publication_count += publication_count
+        logger.info("there are %d authors in %d publications" % (total_author_count, total_publication_count))
         await asyncio.gather(*tasks)
         logger.info("%d authors added from %d publications" % (total_author_count, total_publication_count))
 
