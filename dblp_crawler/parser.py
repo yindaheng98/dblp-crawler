@@ -75,13 +75,18 @@ class Publication:
                 return " ".join(t for t in child.itertext())
 
     def journal(self):
-        tag = {'inproceedings': 'booktitle', 'article': 'journal'}
+        tag = {
+            'inproceedings': 'booktitle',
+            'proceedings': 'booktitle',
+            'article': 'journal',
+            'incollection': 'booktitle',
+            'book': 'series'
+        }
         for child in self.data:
             if self.data.tag in tag and child.tag == tag[self.data.tag]:
                 return child.text
 
     def journal_key(self):
-        tag = {'inproceedings': 'booktitle', 'article': 'journal'}
         for child in self.data:
             if child.tag == "url":
                 return "/".join(child.text.split("/")[0:3])
