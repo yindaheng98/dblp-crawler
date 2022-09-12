@@ -8,6 +8,7 @@ colors = {
         # 清华大学深圳研究院
         '74/1552-1',  # 清深 江勇
         '95/6543',  # 清华 王智
+        '20/5353',
 
         'b/ACBovik',
         '86/896',
@@ -25,7 +26,7 @@ colors = {
     ),
     'gray': (
         # 纯模型研究
-        '24/8616', 'b/ACBovik', '176/4020', '00/5815-1', '166/2763', '61/5017', '06/10816', '119/0230',
+        '24/8616', '176/4020', '00/5815-1', '166/2763', '61/5017', '06/10816', '119/0230',
         '01/5855', '127/0477', '79/3711', '14/6655', '24/4105-8', '97/8704-54', '46/5881', '17/1926',
         '33/4058', '158/1384', '53/520', '77/6697', '51/3185', '31/5649', '16/1278', '205/3991', '23/2089',
         '05/6300-2', '46/3391', '126/3420', '39/3695', '59/4859', '179/6089', '99/4522', '17/2703-1',
@@ -46,8 +47,32 @@ colors = {
         '55/3346', '232/2002', 's/HansPeterSeidel', '180/6438',
     )
 }
+
+
+def filter_noob(data, m):
+    nodes = []
+    drop_nodes = set()
+    for n in data['nodes']:
+        ccf_a_count = 0
+        for publication in n['data']['detail'].values():
+            if publication['CCF'] == 'A':
+                ccf_a_count += 1
+        if ccf_a_count < m:
+            drop_nodes.add(n["id"])
+        else:
+            nodes.append(n)
+    edges = []
+    for e in data['edges']:
+        if e['from'] in drop_nodes or e['to'] in drop_nodes:
+            pass
+        else:
+            edges.append(e)
+    return dict(nodes=nodes, edges=edges)
+
+
 with open("summary.json", 'r', encoding='utf8') as fr:
     j = json.load(fr)
+    j = filter_noob(j, 20)
     for node in j['nodes']:
         if len([d for d in node['data']['detail'].values() if d["CCF"] == 'A']) < 10:  # 过滤掉CCF A文章数小于10的
             node['color'] = 'rgba(97,195,238,0.2)'
