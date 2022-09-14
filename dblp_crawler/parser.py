@@ -1,7 +1,7 @@
-import asyncio
 import json
-import logging
-import xml.etree.ElementTree as ElementTree
+
+import asyncio
+
 from .downloader import *
 
 logger = logging.getLogger("parser")
@@ -14,10 +14,10 @@ class DBLPPerson:
         logger.debug(f"<{self.data.tag} %s>" % " ".join("%s=\"%s\"" % (k, v) for k, v in self.data.attrib.items()))
 
     def pid(self):
-        return self.data.attrib['pid']
+        return self.data.attrib['pid'] if 'pid' in self.data.attrib else None
 
     def name(self):
-        return self.data.attrib['name']
+        return self.data.attrib['name'] if 'name' in self.data.attrib else None
 
     def person(self):
         for child in self.data:

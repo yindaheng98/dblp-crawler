@@ -174,15 +174,16 @@ if __name__ == "__main__":
     class GG(Graph):
         def filter_publications_at_crawler(self, publications):
             publications = list(publications)
-            publication = publications[random.randint(0, len(publications) - 1)]
-            yield publication
+            if len(publications) > 0:
+                publication = publications[random.randint(0, len(publications) - 1)]
+                yield publication
 
         def filter_publications_at_output(self, publications):
             return self.filter_publications_at_crawler(publications)
 
 
     async def main():
-        g = GG(['74/1552-1'], [])
+        g = GG(['74/1552-1', '256/5272'], [])
         await g.bfs_once()
         print("-" * 100)
         await g.bfs_once()
