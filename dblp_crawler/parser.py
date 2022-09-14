@@ -8,16 +8,20 @@ logger = logging.getLogger("parser")
 
 
 class DBLPPerson:
+    ID = 0
+
     def __init__(self, data: ElementTree.Element):
         assert data.tag == "dblpperson", "Should be xml of a dblpperson!"
         self.data = data
         logger.debug(f"<{self.data.tag} %s>" % " ".join("%s=\"%s\"" % (k, v) for k, v in self.data.attrib.items()))
+        DBLPPerson.ID += 1
+        self.id = DBLPPerson.ID
 
     def pid(self):
-        return self.data.attrib['pid'] if 'pid' in self.data.attrib else None
+        return self.data.attrib['pid'] if 'pid' in self.data.attrib else ("Unknown_%d" % self.id)
 
     def name(self):
-        return self.data.attrib['name'] if 'name' in self.data.attrib else None
+        return self.data.attrib['name'] if 'name' in self.data.attrib else ("Unname_%d" % self.id)
 
     def person(self):
         for child in self.data:
