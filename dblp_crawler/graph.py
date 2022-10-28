@@ -137,7 +137,9 @@ class Graph(metaclass=abc.ABCMeta):
         for pid, publications in authors.items():
             gg.add_node(pid, **self.summary_person(g.nodes[pid]['person'], publications))
         for (a, b, d) in list(gg.edges(data=True)):  # 遍历所有文章
-            gg.add_edge(a, b, **self.summary_cooperation(a, b, d["publications"]))
+            gg.add_edge(a, b, **self.summary_cooperation(
+                g.nodes[a]['person'], g.nodes[b]['person'], d["publications"]
+            ))
         return gg
 
 
