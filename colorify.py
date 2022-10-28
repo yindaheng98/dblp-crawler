@@ -153,6 +153,11 @@ def filter_noob(data, m):
             pass
         else:
             edges.append(e)
+        ccf_a_count = 0
+        for publication in e['data']['detail'].values():
+            if publication['CCF'] == 'A':
+                ccf_a_count += 1
+        e["value"] = ccf_a_count
     return dict(nodes=nodes, edges=edges)
 
 
