@@ -21,17 +21,20 @@ def draw_summary(g: nx.Graph):
     plt.show()
 
 
-def summary_to_json(g: nx.Graph):
+def summary_to_json(g: nx.Graph,
+                    count_node_value=lambda d: len(d['publications']),
+                    count_edge_value=lambda d: len(d['publications'])):
     print(f"Loaded {g.number_of_edges()} publications between {g.number_of_nodes()} authors\n")
     nodes = [
-        {'id': k, 'label': d['person'].name(), 'value': len(d['publications']), 'data': d}
+        {'id': k, 'label': d['person'].name(), 'value': count_node_value(d), 'data': d}
         for k, d in g.nodes(data=True)
     ]
     edges = [
-        {'from': u, 'to': v, 'value': len(d['publications']), 'data': d}
+        {'from': u, 'to': v, 'value': count_edge_value(d), 'data': d}
         for u, v, d in g.edges(data=True)
     ]
     return {"nodes": nodes, "edges": edges}
+
 
 def dump_papers_in_summary(g: nx.Graph, path):
     papers = set()
