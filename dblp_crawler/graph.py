@@ -112,6 +112,9 @@ class Graph(metaclass=abc.ABCMeta):
             person=person, publications=list(publications.values())
         )
 
+    def summary_cooperation(self, a, b, publications):  # 构建summary
+        return dict(publications=list(publications.values()))
+
     def networkx_summary(self):
         g = self.networkx()
         gg = nx.Graph()
@@ -121,8 +124,8 @@ class Graph(metaclass=abc.ABCMeta):
             # 把文章加进边信息里
             data = gg.get_edge_data(a, b)
             if data is None or "publications" not in data:
-                data = {"publications": []}
-            data["publications"].append(publication)
+                data = {"publications": {}}
+            data["publications"][publication.key()] = publication
             gg.add_edge(a, b, **data)
             # 把文章加进作者信息里
             if a not in authors:
@@ -133,6 +136,8 @@ class Graph(metaclass=abc.ABCMeta):
             authors[b][publication.key()] = publication
         for pid, publications in authors.items():
             gg.add_node(pid, **self.summary_person(g.nodes[pid]['person'], publications))
+        for (a, b, d) in list(gg.edges(data=True)):  # 遍历所有文章
+            gg.add_edge(a, b, **self.summary_cooperation(a, b, d["publications"]))
         return gg
 
 
