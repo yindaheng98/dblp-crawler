@@ -146,6 +146,7 @@ def filter_noob(data, m):
             drop_nodes.add(n["id"])
         else:
             nodes.append(n)
+        n["value"] = ccf_a_count
     edges = []
     for e in data['edges']:
         if e['from'] in drop_nodes or e['to'] in drop_nodes:
