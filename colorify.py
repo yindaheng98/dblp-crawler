@@ -1,5 +1,3 @@
-import json
-
 colors = {
     'red': (
         # 边缘计算+视频
@@ -132,44 +130,3 @@ colors = {
         '58/5750-1'  # 博士平均毕业时间》=6年
     )
 }
-
-
-def filter_noob(data, m):
-    nodes = []
-    drop_nodes = set()
-    for n in data['nodes']:
-        ccf_a_count = 0
-        for publication in n['data']['detail'].values():
-            if publication['CCF'] == 'A':
-                ccf_a_count += 1
-        if ccf_a_count < m:
-            drop_nodes.add(n["id"])
-        else:
-            nodes.append(n)
-        n["value"] = ccf_a_count
-    edges = []
-    for e in data['edges']:
-        if e['from'] in drop_nodes or e['to'] in drop_nodes:
-            pass
-        else:
-            edges.append(e)
-        ccf_a_count = 0
-        for publication in e['data']['detail'].values():
-            if publication['CCF'] == 'A':
-                ccf_a_count += 1
-        e["value"] = ccf_a_count
-    return dict(nodes=nodes, edges=edges)
-
-
-with open("summary.json", 'r', encoding='utf8') as fr:
-    j = json.load(fr)
-    j = filter_noob(j, 20)
-    for node in j['nodes']:
-        if len(node['data']['publications']) < 2:  # 过滤掉相关文章数小于2的
-            node['color'] = 'rgba(97,195,238,0.2)'
-        for color, who in colors.items():
-            if node['id'] in who:
-                node['color'] = color
-
-    with open("summary.js", 'w', encoding='utf8') as fw:
-        fw.write("let data = " + json.dumps(j, indent=2))
