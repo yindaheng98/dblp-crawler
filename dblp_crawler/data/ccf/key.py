@@ -18,9 +18,9 @@ def key(r):
 
 
 CCF = 'A'
-CCF_A = [key(r) for r in CCF_A]
+CCF_A = list(filter(None, (key(r) for r in CCF_A)))
 CCF = 'B'
-CCF_B = [key(r) for r in CCF_B]
+CCF_B = list(filter(None, (key(r) for r in CCF_B)))
 CCF_B += [
     "db/journals/pe",
     "db/journals/tissec",
@@ -28,7 +28,7 @@ CCF_B += [
     "db/conf/hotchips"
 ]
 CCF = 'C'
-CCF_C = [key(r) for r in CCF_C]
+CCF_C = list(filter(None, (key(r) for r in CCF_C)))
 print(CCF_A)
 print(CCF_B)
 print(CCF_C)
