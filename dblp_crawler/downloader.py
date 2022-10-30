@@ -9,7 +9,7 @@ from asyncio import Semaphore
 
 logger = logging.getLogger("downloader")
 
-http_sem = Semaphore(4)
+http_sem = Semaphore(16)
 file_sem = Semaphore(512)
 
 
