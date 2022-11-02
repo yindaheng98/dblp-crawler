@@ -97,14 +97,14 @@ class Graph(metaclass=abc.ABCMeta):
             if person is None:
                 remain_none += 1
         logger.info("There are %d authors need to be downloaded in next loop" % remain_none)
-        return remain_none
+        return remain_none, total_author_count
 
     def networkx(self):
         g = nx.MultiGraph()
         for publication in self.filter_publications_at_output(self.publications.values()):  # 遍历所有文章
             authors_pid = {author.pid() for author in publication.authors()}  # 获取作者列表
             for a, b in combinations(authors_pid, 2):  # 列表中的作者两两之间形成边
-                if a == b:
+                if a == b or self.persons[a] is None or self.persons[b] is None:
                     continue
                 g.add_node(a, person=self.persons[a])  # 把作者信息加进图里
                 g.add_node(b, person=self.persons[b])  # 把作者信息加进图里
