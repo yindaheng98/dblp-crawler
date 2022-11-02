@@ -92,7 +92,12 @@ class Graph(metaclass=abc.ABCMeta):
         logger.info("there are %d authors in %d publications" % (total_author_count, total_publication_count))
         await asyncio.gather(*tasks)
         logger.info("%d authors added from %d publications" % (total_author_count, total_publication_count))
-        return total_author_count
+        remain_none = 0
+        for person in self.persons.values():
+            if person is None:
+                remain_none += 1
+        logger.info("There are %d authors need to be downloaded in next loop" % remain_none)
+        return remain_none
 
     def networkx(self):
         g = nx.MultiGraph()

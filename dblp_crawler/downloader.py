@@ -10,7 +10,7 @@ from asyncio import Semaphore
 logger = logging.getLogger("downloader")
 
 http_sem = Semaphore(8)
-file_sem = Semaphore(1024)
+file_sem = Semaphore(512)
 
 
 async def download_person(pid: str):
