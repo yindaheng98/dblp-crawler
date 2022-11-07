@@ -51,7 +51,7 @@ class Person:
 
     def affiliations(self):
         for child in self.data:
-            if child.tag == "note" and child.attrib["type"] == "affiliation":
+            if child.tag == "note" and "type" in child.attrib and child.attrib["type"] == "affiliation":
                 yield child.text
 
     def __str__(self):
