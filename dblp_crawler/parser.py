@@ -100,12 +100,23 @@ class Publication:
             if child.tag == "year":
                 return int(child.text)
 
+    def ee(self):
+        for child in self.data:
+            if child.tag == "ee":
+                yield child.text
+
+    def doi(self):
+        for e in self.ee():
+            if re.search(r'doi\.org', e) is not None:
+                return e
+
     def __str__(self):
         key = self.key()
+        doi = self.doi()
         authors = ", ".join(str(author) for author in self.authors())
         title = self.title()
         journal_year = "%s:%d" % (self.journal(), self.year())
-        return "%s\n\t%s\n\t%s\n\t%s" % (key, authors, title, journal_year)
+        return "%s %s\n\t%s\n\t%s\n\t%s" % (key, doi, authors, title, journal_year)
 
 
 class Author:
