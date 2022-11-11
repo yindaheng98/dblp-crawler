@@ -63,13 +63,17 @@ def filter_publications_by_journals(publications, journals: [str]):
 def drop_publications_by_journals(publications, journals: [str]):
     for publication in publications:
         full_name = publication.journal()
+        if full_name is None:
+            continue
         all_journal.add(full_name)
-        if full_name not in journals:
+        for journal in journals:
+            if re.search(journal, full_name.lower()) is not None:
+                logger.debug("Dropped: %s" % publication.journal())
+                dropped_journal.add(publication.journal())
+                break
+        else:
             keepped_journal.add(full_name)
             yield publication
-        else:
-            logger.debug("Dropped: %s" % publication.journal())
-            dropped_journal.add(publication.journal())
 
 
 def count_cooperators(publications):
