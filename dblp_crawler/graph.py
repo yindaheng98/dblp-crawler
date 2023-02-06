@@ -1,9 +1,9 @@
-import asyncio
 import abc
+import asyncio
 import logging
 from itertools import combinations
-from dblp_crawler import download_person, DBLPPerson, download_journal_list, JournalList
-import networkx as nx
+
+from dblp_crawler import download_person, DBLPPerson, Publication, download_journal_list, JournalList
 
 logger = logging.getLogger("graph")
 
@@ -99,87 +99,33 @@ class Graph(metaclass=abc.ABCMeta):
         logger.info("There are %d authors need to be downloaded in next loop" % remain_none)
         return remain_none, total_author_count
 
-    def networkx(self):
-        g = nx.MultiGraph()
+    @abc.abstractmethod
+    def summarize_person(self, a, person):  # 构建summary
+        pass
+
+    @abc.abstractmethod
+    def summarize_publication(self, a, b, publication):  # 构建summary
+        pass
+
+    def summarize(self):
+        summarized_persons = set()
         for publication in self.filter_publications_at_output(self.publications.values()):  # 遍历所有文章
             authors_pid = {author.pid() for author in publication.authors()}  # 获取作者列表
             for a, b in combinations(authors_pid, 2):  # 列表中的作者两两之间形成边
                 if a == b or self.persons[a] is None or self.persons[b] is None:
                     continue
-                g.add_node(a, person=self.persons[a])  # 把作者信息加进图里
-                g.add_node(b, person=self.persons[b])  # 把作者信息加进图里
-                g.add_edge(a, b, key=publication.key(), publication=publication)  # 把边加进图里
-
-        return g
-
-    def summary_person(self, person, publications):  # 构建summary
-        return dict(
-            person=person, publications=list(publications.values())
-        )
-
-    def summary_cooperation(self, a, b, publications):  # 构建summary
-        return dict(publications=list(publications.values()))
-
-    def networkx_summary(self):
-        g = self.networkx()
-        gg = nx.Graph()
-        authors = {}
-        for (a, b, d) in g.edges(data=True):  # 遍历所有文章
-            publication = d['publication']
-            # 把文章加进边信息里
-            data = gg.get_edge_data(a, b)
-            if data is None or "publications" not in data:
-                data = {"publications": {}}
-            data["publications"][publication.key()] = publication
-            gg.add_edge(a, b, **data)
-            # 把文章加进作者信息里
-            if a not in authors:
-                authors[a] = {}
-            authors[a][publication.key()] = publication
-            if b not in authors:
-                authors[b] = {}
-            authors[b][publication.key()] = publication
-        for pid, publications in authors.items():
-            gg.add_node(pid, **self.summary_person(g.nodes[pid]['person'], publications))
-        for (a, b, d) in list(gg.edges(data=True)):  # 遍历所有文章
-            gg.add_edge(a, b, **self.summary_cooperation(
-                g.nodes[a]['person'], g.nodes[b]['person'], d["publications"]
-            ))
-        return gg
-
-
-def networkx_drop_noob_once(g: nx.Graph, filter_min_publications=3):
-    for node, data in list(g.nodes(data=True)):
-        if data is None or 'publications' not in data or len(data['publications']) < filter_min_publications:
-            # 文章数量太少？
-            g.remove_node(node)  # 应该不是老师吧
-    return g
-
-
-def networkx_drop_noob_all(g: nx.Graph, filter_min_publications=3):
-    more = True
-    while more:
-        more = False
-        for node, data in list(g.nodes(data=True)):
-            if data is None or 'publications' not in data or len(data['publications']) < filter_min_publications:
-                # 文章数量太少？
-                g.remove_node(node)  # 应该不是老师吧
-                more = True  # 需要连带删除
-    return g
-
-
-def networkx_drop_thin_edge(g: nx.Graph, filter_min_publications=3):
-    for a, b, data in list(g.edges(data=True)):
-        if data is None or 'publications' not in data or len(data['publications']) < filter_min_publications:
-            # 文章数量太少？
-            g.remove_edge(a, b)  # 那应该不是紧密协作
-    return g
+                if a not in summarized_persons:
+                    self.summarize_person(a, person=self.persons[a])  # 把作者信息加进图里
+                    summarized_persons.add(a)
+                if b not in summarized_persons:
+                    self.summarize_person(b, person=self.persons[b])  # 把作者信息加进图里
+                    summarized_persons.add(b)
+                self.summarize_publication(a, b, publication=publication)  # 把边加进图里
 
 
 if __name__ == "__main__":
     import logging
     import random
-    import matplotlib.pyplot as plt
 
     logging.basicConfig(level=logging.DEBUG)
 
@@ -194,6 +140,14 @@ if __name__ == "__main__":
         def filter_publications_at_output(self, publications):
             return self.filter_publications_at_crawler(publications)
 
+        def summarize_person(self, a, person: DBLPPerson):  # 构建summary
+            logger.warning(
+                f"Please specify a summarize_person in {self} for: {person.name()}")
+
+        def summarize_publication(self, a, b, publication: Publication):  # 构建summary
+            logger.warning(
+                f"Please specify a summarize_publication in {self} for: {a, b, publication.title()}")
+
 
     async def main():
         g = GG(['74/1552-1', '256/5272'], [])
@@ -201,23 +155,7 @@ if __name__ == "__main__":
         print("-" * 100)
         await g.bfs_once()
         print("-" * 100)
-
-        summary = g.networkx_summary()
-        for node, data in list(summary.nodes(data=True)):
-            print(node, data['person'].name(), len(list(data['person'].publications())))
-
-        fig, ax = plt.subplots(figsize=(12, 12))
-        nx.draw(g.networkx_summary(), ax=ax)
-        ax.margins(0.1, 0.05)
-        fig.tight_layout()
-
-        fig, ax = plt.subplots(figsize=(12, 12))
-        nx.draw(networkx_drop_noob_once(g.networkx_summary()), ax=ax)
-        ax.margins(0.1, 0.05)
-        fig.tight_layout()
-
-        plt.axis("off")
-        plt.show()
+        g.summarize()
 
 
     loop = asyncio.get_event_loop()
