@@ -2,7 +2,7 @@ import abc
 import asyncio
 import logging
 from itertools import combinations
-from typing import Optional
+from typing import Optional, Iterator, Iterable
 
 from dblp_crawler import download_person, DBLPPerson, Publication, download_journal_list, JournalList
 
@@ -10,18 +10,21 @@ logger = logging.getLogger("graph")
 
 
 class Graph(metaclass=abc.ABCMeta):
-    def __init__(self, pid_list: list[str], journal_list: list[str]):
+    def __init__(self, pid_list: list[str], journal_list: list[str]) -> None:
         self.persons: dict[str, Optional[DBLPPerson]] = {pid: None for pid in pid_list}
         self.checked: set[str] = set()
         self.publications: dict[str, Publication] = {}
         self.init_journals = journal_list
         self.journals_inited = False
 
-    async def init_persons_from_journals(self):
+    async def init_persons_from_journals(self) -> None:
         author_count = 0
         publication_count = 0
         for jid in self.init_journals:
-            jl = JournalList(await download_journal_list(jid))
+            data = await download_journal_list(jid)
+            if data is None:
+                return
+            jl = JournalList(data)
             async for journal in jl.journals():
                 for publication in self.filter_publications_at_crawler(journal.publications()):
                     if publication.key() in self.publications:
@@ -36,24 +39,24 @@ class Graph(metaclass=abc.ABCMeta):
         logger.info("%d initial authors added from %d publications" % (author_count, publication_count))
 
     @abc.abstractmethod
-    def filter_publications_at_crawler(self, publications: list[Publication]):
+    def filter_publications_at_crawler(self, publications: Iterable[Publication]) -> Iterable[Publication]:
         """在收集信息时过滤`Publication`，不会对被此方法过滤掉的`Publication`进行信息收集"""
         for publication in publications:
             yield publication
 
     @abc.abstractmethod
-    def filter_publications_at_output(self, publications: list[Publication]):
+    def filter_publications_at_output(self, publications: Iterable[Publication]) -> Iterable[Publication]:
         """在输出时过滤`Publication`，被过滤掉的`Publication`将不会出现在输出中"""
         for publication in publications:
             yield publication
 
-    async def download_person(self, pid: str):
+    async def download_person(self, pid: str) -> None:
         data = await download_person(pid)
         if data is None:
             return
         self.persons[pid] = DBLPPerson(data)
 
-    async def bfs_once(self):
+    async def bfs_once(self) -> tuple[int, int]:
         if not self.journals_inited:
             await self.init_persons_from_journals()
 
@@ -103,16 +106,16 @@ class Graph(metaclass=abc.ABCMeta):
         return remain_none, total_author_count
 
     @abc.abstractmethod
-    def summarize_person(self, a: str, person: DBLPPerson):  # 构建summary
+    def summarize_person(self, a: str, person: Optional[DBLPPerson]) -> None:  # 构建summary
         """你想要如何Summary一个`Person`数据？实现此方法"""
         pass
 
     @abc.abstractmethod
-    def summarize_publication(self, a: str, b: str, publication: Publication):  # 构建summary
+    def summarize_publication(self, a: str, b: str, publication: Publication) -> None:  # 构建summary
         """你想要如何Summary一个`Publication`数据？实现此方法"""
         pass
 
-    def summarize(self):
+    def summarize(self) -> None:
         """执行`summarize_person`和`summarize_publication`指定的Summary过程"""
         summarized_persons = set()
         for publication in self.filter_publications_at_output(list(self.publications.values())):  # 遍历所有文章

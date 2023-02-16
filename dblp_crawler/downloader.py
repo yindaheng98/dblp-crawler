@@ -1,4 +1,5 @@
 import re
+from typing import Optional
 import os.path
 import xml.etree.ElementTree as ElementTree
 
@@ -13,19 +14,19 @@ http_sem = Semaphore(8)
 file_sem = Semaphore(512)
 
 
-async def download_person(pid: str):
+async def download_person(pid: str) -> Optional[ElementTree.Element]:
     return await download_item("pid/" + pid + ".xml")
 
 
-async def download_journal_list(pid: str):
+async def download_journal_list(pid: str) -> Optional[ElementTree.Element]:
     return await download_item(pid + "/index.xml")
 
 
-async def download_journal(pid: str):
+async def download_journal(pid: str) -> Optional[ElementTree.Element]:
     return await download_item(re.sub(r"\.html$", ".xml", pid))
 
 
-async def download_item(path: str):
+async def download_item(path: str) -> Optional[ElementTree.Element]:
     save_path = os.path.join("save", path)
     if os.path.isfile(save_path):
         async with file_sem:
@@ -52,3 +53,4 @@ async def download_item(path: str):
                     return data
         except Exception as e:
             logger.error("invalid response: %s" % e)
+    return None
