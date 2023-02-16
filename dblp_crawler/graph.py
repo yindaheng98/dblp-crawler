@@ -2,6 +2,7 @@ import abc
 import asyncio
 import logging
 from itertools import combinations
+from typing import Optional
 
 from dblp_crawler import download_person, DBLPPerson, Publication, download_journal_list, JournalList
 
@@ -9,10 +10,10 @@ logger = logging.getLogger("graph")
 
 
 class Graph(metaclass=abc.ABCMeta):
-    def __init__(self, pid_list: [str], journal_list: [str]):
-        self.persons = {pid: None for pid in pid_list}
-        self.checked = set()
-        self.publications = {}
+    def __init__(self, pid_list: list[str], journal_list: list[str]):
+        self.persons: dict[str, Optional[DBLPPerson]] = {pid: None for pid in pid_list}
+        self.checked: set[str] = set()
+        self.publications: dict[str, Publication] = {}
         self.init_journals = journal_list
         self.journals_inited = False
 
@@ -35,13 +36,13 @@ class Graph(metaclass=abc.ABCMeta):
         logger.info("%d initial authors added from %d publications" % (author_count, publication_count))
 
     @abc.abstractmethod
-    def filter_publications_at_crawler(self, publications):
+    def filter_publications_at_crawler(self, publications: list[Publication]):
         """在收集信息时过滤`Publication`，不会对被此方法过滤掉的`Publication`进行信息收集"""
         for publication in publications:
             yield publication
 
     @abc.abstractmethod
-    def filter_publications_at_output(self, publications):
+    def filter_publications_at_output(self, publications: list[Publication]):
         """在输出时过滤`Publication`，被过滤掉的`Publication`将不会出现在输出中"""
         for publication in publications:
             yield publication
@@ -102,19 +103,19 @@ class Graph(metaclass=abc.ABCMeta):
         return remain_none, total_author_count
 
     @abc.abstractmethod
-    def summarize_person(self, a, person):  # 构建summary
+    def summarize_person(self, a: str, person: DBLPPerson):  # 构建summary
         """你想要如何Summary一个`Person`数据？实现此方法"""
         pass
 
     @abc.abstractmethod
-    def summarize_publication(self, a, b, publication):  # 构建summary
+    def summarize_publication(self, a: str, b: str, publication: Publication):  # 构建summary
         """你想要如何Summary一个`Publication`数据？实现此方法"""
         pass
 
     def summarize(self):
         """执行`summarize_person`和`summarize_publication`指定的Summary过程"""
         summarized_persons = set()
-        for publication in self.filter_publications_at_output(self.publications.values()):  # 遍历所有文章
+        for publication in self.filter_publications_at_output(list(self.publications.values())):  # 遍历所有文章
             authors_pid = {author.pid() for author in publication.authors()}  # 获取作者列表
             for a, b in combinations(authors_pid, 2):  # 列表中的作者两两之间形成边
                 if a == b or self.persons[a] is None or self.persons[b] is None:
