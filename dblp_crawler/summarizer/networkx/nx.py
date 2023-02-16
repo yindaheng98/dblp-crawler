@@ -20,7 +20,8 @@ class NetworkxGraph(Graph, metaclass=abc.ABCMeta):
     def summarize_publication(self, a, b, publication):  # 构建summary
         self.graph.add_edge(a, b, key=publication.key(), publication=publication)  # 把边加进图里
 
-    def networkx(self):
+    def multi_graph_summary(self):
+        """输出一个 networkx.MultiGraph，节点对应作者，每条边对应一篇论文，作者间可有多条边"""
         self.graph = nx.MultiGraph()
         self.summarize()
         return self.graph
@@ -33,8 +34,9 @@ class NetworkxGraph(Graph, metaclass=abc.ABCMeta):
     def summary_cooperation(self, a, b, publications):  # 构建summary
         return dict(publications=list(publications.values()))
 
-    def networkx_summary(self):
-        g = self.networkx()
+    def graph_summary(self):
+        """输出一个 networkx.Graph，节点对应作者，每条边对应多篇论文，作者间仅有一条边"""
+        g = self.multi_graph_summary()
         gg = nx.Graph()
         authors = {}
         for (a, b, d) in g.edges(data=True):  # 遍历所有文章
@@ -95,17 +97,17 @@ if __name__ == "__main__":
         await g.bfs_once()
         print("-" * 100)
 
-        summary = g.networkx_summary()
+        summary = g.graph_summary()
         for node, data in list(summary.nodes(data=True)):
             print(node, data['person'].name(), len(list(data['person'].publications())))
 
         fig, ax = plt.subplots(figsize=(12, 12))
-        nx.draw(g.networkx_summary(), ax=ax)
+        nx.draw(g.graph_summary(), ax=ax)
         ax.margins(0.1, 0.05)
         fig.tight_layout()
 
         fig, ax = plt.subplots(figsize=(12, 12))
-        nx.draw(networkx_drop_noob_once(g.networkx_summary()), ax=ax)
+        nx.draw(networkx_drop_noob_once(g.graph_summary()), ax=ax)
         ax.margins(0.1, 0.05)
         fig.tight_layout()
 

@@ -35,12 +35,14 @@ class Graph(metaclass=abc.ABCMeta):
         logger.info("%d initial authors added from %d publications" % (author_count, publication_count))
 
     @abc.abstractmethod
-    def filter_publications_at_crawler(self, publications):  # 在爬虫阶段过滤
+    def filter_publications_at_crawler(self, publications):
+        """在收集信息时过滤`Publication`，不会对被此方法过滤掉的`Publication`进行信息收集"""
         for publication in publications:
             yield publication
 
     @abc.abstractmethod
-    def filter_publications_at_output(self, publications):  # 在输出阶段过滤
+    def filter_publications_at_output(self, publications):
+        """在输出时过滤`Publication`，被过滤掉的`Publication`将不会出现在输出中"""
         for publication in publications:
             yield publication
 
@@ -101,13 +103,16 @@ class Graph(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def summarize_person(self, a, person):  # 构建summary
+        """你想要如何Summary一个`Person`数据？实现此方法"""
         pass
 
     @abc.abstractmethod
     def summarize_publication(self, a, b, publication):  # 构建summary
+        """你想要如何Summary一个`Publication`数据？实现此方法"""
         pass
 
     def summarize(self):
+        """执行`summarize_person`和`summarize_publication`指定的Summary过程"""
         summarized_persons = set()
         for publication in self.filter_publications_at_output(self.publications.values()):  # 遍历所有文章
             authors_pid = {author.pid() for author in publication.authors()}  # 获取作者列表

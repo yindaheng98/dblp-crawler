@@ -140,15 +140,6 @@ class Author:
         return self.name()
 
 
-class JSONEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, DBLPPerson):
-            return obj.pid() + "\n" + str(obj.person())
-        if isinstance(obj, Publication):
-            return str(obj)
-        return json.JSONEncoder.default(self, obj)
-
-
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
 
