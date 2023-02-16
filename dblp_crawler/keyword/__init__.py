@@ -8,7 +8,7 @@ class Keywords:
 
     def add_rule(self, *rule: str):
         """与关系的单词列"""
-        rule = frozenset(word.lower() for word in rule)
+        rule = tuple(frozenset(word.lower() for word in rule))
         self.rules.add(rule)
         self.words = self.words.union(rule)
 
@@ -18,9 +18,9 @@ class Keywords:
             self.add_rule(*rule)
 
     def add_word_rules(self, *words: str):
-        self.add_rule_list(*list((word, ) for word in words))
+        self.add_rule_list(*list(set(word, ) for word in words))
 
-    def match(self, sentence):
+    def match(self, sentence: str):
         sentence = sentence.lower()
         words = set(re.findall(r"\w+", sentence))
         for rule in self.rules:
@@ -35,7 +35,7 @@ class Keywords:
 
 if __name__ == "__main__":
     kw = Keywords()
-    kw.add_rule_list(("super", "resolution"), ("content", "aware"))
+    kw.add_rule_list({"super", "resolution"}, {"content", "aware"})
     kw.add_rule("video")
     kw.add_rule("edge", "computing")
     print(kw.match("An adaptive clustering-based evolutionary algorithm for many-objective optimization problems"))
