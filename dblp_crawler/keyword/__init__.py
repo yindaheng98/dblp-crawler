@@ -23,13 +23,14 @@ class Keywords:
     def match(self, sentence: str) -> bool:
         sentence = sentence.lower()
         words = set(re.findall(r"\w+", sentence))
-        for rule in self.rules:
-            if set(rule).issubset(words):
+        for rule in self.rules:  # 只要有一个rule能匹配上就返回True
+            if set(rule).issubset(words):  # 同时包含rule中所列的所有关键词就返回True
                 return True
         return False
 
-    def match_words(self, sentence: str) -> int:
+    def match_words(self, sentence: str) -> bool:
         sentence = sentence.lower()
+        # 所有rule全切成一个个单词，只要包含其中一个单词就返回True
         return len(set(re.findall(r"\w+", sentence)).intersection(self.words)) > 0
 
 

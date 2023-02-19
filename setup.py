@@ -13,11 +13,13 @@ package_dir = {
     'dblp_crawler.filter': 'dblp_crawler/filter',
     'dblp_crawler.keyword': 'dblp_crawler/keyword',
     'dblp_crawler.summarizer': 'dblp_crawler/summarizer',
+    'dblp_crawler.summarizer.networkx': 'dblp_crawler/summarizer/networkx',
+    'dblp_crawler.summarizer.neo4j': 'dblp_crawler/summarizer/neo4j',
 }
 
 setup(
     name='dblp_crawler',
-    version='0.0.4',
+    version='0.0.5',
     author='yindaheng98',
     author_email='yindaheng98@163.com',
     url='https://github.com/yindaheng98/dblp-crawler',
