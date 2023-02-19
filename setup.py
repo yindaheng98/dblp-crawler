@@ -10,7 +10,6 @@ package_dir = {
     'dblp_crawler': 'dblp_crawler',
     'dblp_crawler.data': 'dblp_crawler/data',
     'dblp_crawler.data.ccf': 'dblp_crawler/data/ccf',
-    'dblp_crawler.filter': 'dblp_crawler/filter',
     'dblp_crawler.keyword': 'dblp_crawler/keyword',
     'dblp_crawler.summarizer': 'dblp_crawler/summarizer',
     'dblp_crawler.summarizer.networkx': 'dblp_crawler/summarizer/networkx',
