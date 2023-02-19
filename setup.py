@@ -16,7 +16,7 @@ package_dir = {
 
 setup(
     name='dblp_crawler',
-    version='0.0.2',
+    version='0.0.3',
     author='yindaheng98',
     author_email='yindaheng98@163.com',
     url='https://github.com/yindaheng98/dblp-crawler',
@@ -31,10 +31,9 @@ setup(
         "Operating System :: OS Independent",
     ],
     install_requires=[
-        'networkx==2.8.6',
-        'aiofile==3.8.1',
-        'aiohttp==3.8.1',
-        'matplotlib==3.5.3',
-        'neo4j==5.5.0',
+        'networkx==2.*',
+        'aiofile>=3.8.1',
+        'aiohttp>=3.8.1',
+        'neo4j>=5.5.0',
     ],
 )
