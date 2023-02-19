@@ -1,20 +1,20 @@
 import argparse
 
 
-def add_argument_pid(parser: argparse.ArgumentParser, *flags, dest: str = 'pid', required=True) -> None:
+def add_argument_pid(parser: argparse.ArgumentParser, *flags, dest: str = 'pid') -> None:
     if len(flags) <= 0:
         flags = ['-p', '--pid']
     parser.add_argument(
-        *flags, dest=dest, action='append', required=required,
+        *flags, dest=dest, action='append', required=False, default=[],
         help=f'Set pids.'
     )
 
 
-def add_argument_journal(parser: argparse.ArgumentParser, *flags, dest: str = 'journal', required=True) -> None:
+def add_argument_journal(parser: argparse.ArgumentParser, *flags, dest: str = 'journal') -> None:
     if len(flags) <= 0:
         flags = ['-j', '--journal']
     parser.add_argument(
-        *flags, dest=dest, action='append', required=required,
+        *flags, dest=dest, action='append', required=False, default=[],
         help=f'Set journals.'
     )
 
