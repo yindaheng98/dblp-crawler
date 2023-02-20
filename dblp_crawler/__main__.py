@@ -1,6 +1,7 @@
 import argparse
 import asyncio
 from typing import Iterable
+import logging
 
 from dblp_crawler import Publication
 from dblp_crawler.keyword import Keywords
@@ -8,6 +9,9 @@ from dblp_crawler.keyword.arg import add_argument as add_argument_kw, parse_args
 from dblp_crawler.arg import add_argument_pid, add_argument_journal, parse_args_pid_journal
 from dblp_crawler.summarizer.networkx import NetworkxGraph
 from dblp_crawler.summarizer.neo4j import Neo4jGraph
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger('dblp_crawler')
 
 parser = argparse.ArgumentParser()
 
@@ -22,9 +26,9 @@ def func_parser(parser):
     year = args.year
     keywords = parse_args_kw(parser)
     pid_list, journal_list = parse_args_pid_journal(parser)
-    print(keywords.rules)
-    print(pid_list)
-    print(journal_list)
+    logger.info(f"Specified keyword rules: {keywords.rules}")
+    logger.info(f"Specified pid_list for init: {pid_list}")
+    logger.info(f"Specified journal_list for init: {journal_list}")
     return year, keywords, pid_list, journal_list
 
 
@@ -42,7 +46,7 @@ def filter_publications_at_output(publications, keywords: Keywords):
 
 async def bfs_to_end(graph, limit: int = 0):
     while min(*(await graph.bfs_once())) > 0 and (limit != 0):
-        print("Still running......")
+        logger.info("Still running......")
         limit -= 1
 
 
@@ -72,7 +76,7 @@ def func_parser_nx(parser):
     year, keywords, pid_list, journal_list = func_parser(parser)
     args = parser.parse_args()
     dest = args.dest
-    print(dest)
+    logger.info(f"Specified dest: {dest}")
     g = NetworkxGraphDefault(year=year, keywords=keywords, pid_list=pid_list, journal_list=journal_list)
     asyncio.get_event_loop().run_until_complete(bfs_to_end(g))
     summary = g.dict_summary()
@@ -111,9 +115,7 @@ def func_parser_n4j(parser):
     from neo4j import GraphDatabase
     year, keywords, pid_list, journal_list = func_parser(parser)
     args = parser.parse_args()
-    auth = args.auth
-    uri = args.uri
-    print(uri, auth)
+    logger.info(f"Specified uri and auth: {args.uri} {args.auth}")
 
     with GraphDatabase.driver(args.uri, auth=args.auth) as driver:
         with driver.session() as session:
@@ -121,6 +123,7 @@ def func_parser_n4j(parser):
                 year=year, keywords=keywords, session=session,
                 pid_list=pid_list, journal_list=journal_list)
             asyncio.get_event_loop().run_until_complete(bfs_to_end(g))
+            logger.info(f"Summarizing to: {args.uri}")
             g.summarize()
 
 

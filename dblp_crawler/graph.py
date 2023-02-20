@@ -2,7 +2,7 @@ import abc
 import asyncio
 import logging
 from itertools import combinations
-from typing import Optional, Iterator, Iterable
+from typing import Optional, Iterable
 
 from dblp_crawler import download_person, DBLPPerson, Publication, download_journal_list, JournalList
 
@@ -130,42 +130,3 @@ class Graph(metaclass=abc.ABCMeta):
                     self.summarize_person(b, person=self.persons[b])  # 把作者信息加进图里
                     summarized_persons.add(b)
                 self.summarize_publication(a, b, publication=publication)  # 把边加进图里
-
-
-if __name__ == "__main__":
-    import logging
-    import random
-
-    logging.basicConfig(level=logging.DEBUG)
-
-
-    class GG(Graph):
-        def filter_publications_at_crawler(self, publications):
-            publications = list(publications)
-            if len(publications) > 0:
-                publication = publications[random.randint(0, len(publications) - 1)]
-                yield publication
-
-        def filter_publications_at_output(self, publications):
-            return self.filter_publications_at_crawler(publications)
-
-        def summarize_person(self, a, person: DBLPPerson):  # 构建summary
-            logger.warning(
-                f"Please specify a summarize_person in {self} for: {person.name()}")
-
-        def summarize_publication(self, a, b, publication: Publication):  # 构建summary
-            logger.warning(
-                f"Please specify a summarize_publication in {self} for: {a, b, publication.title()}")
-
-
-    async def main():
-        g = GG(['74/1552-1', '256/5272'], [])
-        await g.bfs_once()
-        print("-" * 100)
-        await g.bfs_once()
-        print("-" * 100)
-        g.summarize()
-
-
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
