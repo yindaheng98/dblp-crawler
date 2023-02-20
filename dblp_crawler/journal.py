@@ -25,7 +25,12 @@ class JournalList:
         return self.data.attrib['title']
 
     def journal_keys(self) -> list[str]:
-        return [li.attrib["href"] for li in self.data.findall('./ul/li/ref')]
+        v1 = [li.attrib["href"] for li in self.data.findall('./ul/li/ref')]
+        h1 = self.data.find('./h1').text
+        v2 = [proceedings.find('./url').text
+              for proceedings in self.data.findall('./dblpcites/r/proceedings')
+              if proceedings.find('./booktitle').text == h1]
+        return v1 + v2
 
     async def journals(self) -> AsyncIterator[Journal]:
         for jid in self.journal_keys():

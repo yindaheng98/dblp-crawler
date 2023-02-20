@@ -6,7 +6,7 @@ def add_argument_pid(parser: argparse.ArgumentParser, *flags, dest: str = 'pid')
         flags = ['-p', '--pid']
     parser.add_argument(
         *flags, dest=dest, action='append', required=False, default=[],
-        help=f'Set pids.'
+        help=f'Specified author pids to start crawling.'
     )
 
 
@@ -15,7 +15,7 @@ def add_argument_journal(parser: argparse.ArgumentParser, *flags, dest: str = 'j
         flags = ['-j', '--journal']
     parser.add_argument(
         *flags, dest=dest, action='append', required=False, default=[],
-        help=f'Set journals.'
+        help=f'Specify author journal keys to start crawling.'
     )
 
 

@@ -7,7 +7,7 @@ def add_argument(parser: argparse.ArgumentParser, *flags, dest: str = 'keyword',
         flags = ['-k', '--keyword']
     parser.add_argument(
         *flags, dest=dest, action='append', required=required,
-        help=f'Set keywords.'
+        help=f'Specify keyword rules.'
     )
 
 

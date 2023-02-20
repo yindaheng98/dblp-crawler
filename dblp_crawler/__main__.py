@@ -15,7 +15,7 @@ logger = logging.getLogger('dblp_crawler')
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument("-y", "--year", type=int, help="Set year.", required=True)
+parser.add_argument("-y", "--year", type=int, help="Only crawl the paper after the specified year.", default=2000)
 add_argument_kw(parser)
 add_argument_pid(parser)
 add_argument_journal(parser)
@@ -68,8 +68,8 @@ class NetworkxGraphDefault(NetworkxGraph):
         yield from filter_publications_at_output(publications, self.keywords)
 
 
-parser_nx = subparsers.add_parser('networkx', help='networkx help')
-parser_nx.add_argument("--dest", type=str, required=True, help=f'Set dest.')
+parser_nx = subparsers.add_parser('networkx', help='Write results to a json file.')
+parser_nx.add_argument("--dest", type=str, required=True, help=f'Path to write results.')
 
 
 def func_parser_nx(parser):
@@ -106,9 +106,9 @@ class Neo4jGraphDefault(Neo4jGraph):
         yield from filter_publications_at_output(publications, self.keywords)
 
 
-parser_n4j = subparsers.add_parser('neo4j', help='neo4j help')
-parser_n4j.add_argument("--auth", type=str, default=None, help=f'Set auth.')
-parser_n4j.add_argument("--uri", type=str, required=True, help=f'Set uri.')
+parser_n4j = subparsers.add_parser('neo4j', help='Write result to neo4j database')
+parser_n4j.add_argument("--auth", type=str, default=None, help=f'Auth to neo4j database.')
+parser_n4j.add_argument("--uri", type=str, required=True, help=f'URI to neo4j database.')
 
 
 def func_parser_n4j(parser):
