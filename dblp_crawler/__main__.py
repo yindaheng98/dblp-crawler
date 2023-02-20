@@ -75,25 +75,7 @@ def func_parser_nx(parser):
     print(dest)
     g = NetworkxGraphDefault(year=year, keywords=keywords, pid_list=pid_list, journal_list=journal_list)
     asyncio.get_event_loop().run_until_complete(bfs_to_end(g))
-    g = g.graph_summary()
-
-    nodes, edges, publications = [], [], {}
-    for k, d in g.nodes(data=True):
-        nodes.append({
-            'id': k, 'label': d['person'].name(),
-            'person': d['person'].__dict__(),
-            'publications': [pub.key() for pub in d['publications']]
-        })
-        for pub in d['publications']:
-            publications[pub.key()] = pub.__dict__()
-    for u, v, d in g.edges(data=True):
-        edges.append({
-            'from': u, 'to': v,
-            'publications': [pub.key() for pub in d['publications']]
-        })
-        for pub in d['publications']:
-            publications[pub.key()] = pub.__dict__()
-    summary = dict(nodes=nodes, edges=edges, publications=publications)
+    summary = g.dict_summary()
 
     import json
 

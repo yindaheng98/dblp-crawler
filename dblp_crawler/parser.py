@@ -154,7 +154,7 @@ class DBLPPerson:
             pid=self.pid(),
             name=self.name(),
             affiliations=list(person.affiliations()),
-            all_publications=[pub.key() for pub in self.publications()]
+            publications=[pub.key() for pub in self.publications()]
         )
 
 

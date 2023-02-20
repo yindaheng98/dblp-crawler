@@ -62,6 +62,28 @@ class NetworkxGraph(Graph, metaclass=abc.ABCMeta):
             ))
         return gg
 
+    def dict_summary(self):
+
+        g = self.graph_summary()
+
+        nodes, edges, publications = [], [], {}
+        for k, d in g.nodes(data=True):
+            nodes.append({
+                'id': k, 'label': d['person'].name(),
+                'person': d['person'].__dict__(),
+                'publications': [pub.key() for pub in d['publications']]
+            })
+            for pub in d['publications']:
+                publications[pub.key()] = pub.__dict__()
+        for u, v, d in g.edges(data=True):
+            edges.append({
+                'from': u, 'to': v,
+                'publications': [pub.key() for pub in d['publications']]
+            })
+            for pub in d['publications']:
+                publications[pub.key()] = pub.__dict__()
+        return dict(nodes=nodes, edges=edges, publications=publications)
+
 
 if __name__ == "__main__":
     import logging
