@@ -75,6 +75,8 @@ class NetworkxGraph(Graph, metaclass=abc.ABCMeta):
             })
             for pub in d['publications']:
                 publications[pub.key()] = pub.__dict__()
+            for pub in d['person'].publications():
+                publications[pub.key()] = pub.__dict__()
         for u, v, d in g.edges(data=True):
             edges.append({
                 'from': u, 'to': v,
