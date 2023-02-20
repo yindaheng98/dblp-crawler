@@ -90,3 +90,11 @@ e.g. init authors from ACM MM (`db/conf/mm` is the key for ACM MM in dblp: "http
 ```sh
 python -m dblp_crawler -k video -k edge -j db/conf/mm networkx --dest summary.json
 ```
+
+### Init authors from journal in some variables
+
+e.g. there is a `CCF_A` in `dblp_crawler.data` contains keys of CCF A conferences
+
+```sh
+python -m dblp_crawler -k video -k edge -j "importlib.import_module('dblp_crawler.data').CCF_A" networkx --dest summary.json
+```
