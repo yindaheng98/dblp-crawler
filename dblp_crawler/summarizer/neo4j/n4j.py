@@ -12,12 +12,22 @@ logger = logging.getLogger("graph")
 
 def add_person(tx, person: DBLPPerson):
     tx.run("MERGE (a:Person {pid: $pid, name: $name})", pid=person.pid(), name=person.name())
+    for publication in person.publications():
+        tx.run("MATCH (a:Person) WHERE a.pid = $pid "
+               "MERGE (p:Publication {key:$key, title:$title, journal_key:$journal_key, journal:$journal, year:$year}) "
+               "MERGE (a)-[:WRITE]->(p)",
+               pid=person.pid(),
+               key=publication.key(),
+               title=publication.title(),
+               journal_key=publication.journal_key() or "",
+               journal=publication.journal() or "",
+               year=publication.year())
 
 
 def add_edge(tx, a: str, b: str, publication: Publication):
     tx.run("MATCH (a:Person) WHERE a.pid = $a "
            "MATCH (b:Person) WHERE b.pid = $b "
-           "MERGE (p:Publication {key:$key, title:$title, journal_key:$journal_key, journal:$journal, year:$year}) "
+           "MERGE (p:Publication {key:$key, title:$title, journal_key:$journal_key, journal:$journal, year:$year, selected: true}) "
            "MERGE (a)-[:WRITE]->(p)"
            "MERGE (b)-[:WRITE]->(p)",
            a=a, b=b,
@@ -39,37 +49,3 @@ class Neo4jGraph(Graph, metaclass=abc.ABCMeta):
 
     def summarize_publication(self, a: str, b: str, publication: Publication):  # 构建summary
         self.session.execute_write(add_edge, a, b, publication)  # 把边加进图里
-
-
-if __name__ == "__main__":
-    import logging
-    import random
-    from neo4j import GraphDatabase
-
-    logging.basicConfig(level=logging.DEBUG)
-
-
-    class GG(Neo4jGraph):
-        def filter_publications_at_crawler(self, publications):
-            publications = list(publications)
-            if len(publications) > 0:
-                publication = publications[random.randint(0, len(publications) - 1)]
-                yield publication
-
-        def filter_publications_at_output(self, publications):
-            return self.filter_publications_at_crawler(publications)
-
-
-    async def main():
-        with GraphDatabase.driver("neo4j://10.128.202.18:7687") as driver:
-            with driver.session() as session:
-                g = GG(session, ['74/1552-1', '256/5272'], [])
-                await g.bfs_once()
-                print("-" * 100)
-                await g.bfs_once()
-                print("-" * 100)
-                g.summarize()
-
-
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())

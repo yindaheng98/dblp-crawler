@@ -103,7 +103,7 @@ class Neo4jGraphDefault(Neo4jGraph):
 
 
 parser_n4j = subparsers.add_parser('neo4j', help='neo4j help')
-parser_n4j.add_argument("--auth", type=str, required=True, help=f'Set auth.')
+parser_n4j.add_argument("--auth", type=str, default=None, help=f'Set auth.')
 parser_n4j.add_argument("--uri", type=str, required=True, help=f'Set uri.')
 
 
@@ -113,7 +113,7 @@ def func_parser_n4j(parser):
     args = parser.parse_args()
     auth = args.auth
     uri = args.uri
-    print(auth, uri)
+    print(uri, auth)
 
     with GraphDatabase.driver(args.uri, auth=args.auth) as driver:
         with driver.session() as session:
