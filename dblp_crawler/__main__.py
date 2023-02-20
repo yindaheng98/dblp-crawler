@@ -76,30 +76,29 @@ def func_parser_nx(parser):
     g = NetworkxGraphDefault(year=year, keywords=keywords, pid_list=pid_list, journal_list=journal_list)
     asyncio.get_event_loop().run_until_complete(bfs_to_end(g))
     g = g.graph_summary()
-    summary = dict(
-        nodes=[
-            {'id': k, 'label': d['person'].name(), 'data': d}
-            for k, d in g.nodes(data=True)
-        ],
-        edges=[
-            {'from': u, 'to': v, 'data': d}
-            for u, v, d in g.edges(data=True)
-        ]
-    )
+
+    nodes, edges, publications = [], [], {}
+    for k, d in g.nodes(data=True):
+        nodes.append({
+            'id': k, 'label': d['person'].name(),
+            'person': d['person'].__dict__(),
+            'publications': [pub.key() for pub in d['publications']]
+        })
+        for pub in d['publications']:
+            publications[pub.key()] = pub.__dict__()
+    for u, v, d in g.edges(data=True):
+        edges.append({
+            'from': u, 'to': v,
+            'publications': [pub.key() for pub in d['publications']]
+        })
+        for pub in d['publications']:
+            publications[pub.key()] = pub.__dict__()
+    summary = dict(nodes=nodes, edges=edges, publications=publications)
 
     import json
-    from dblp_crawler import DBLPPerson
-
-    class JSONEncoder(json.JSONEncoder):
-        def default(self, obj):
-            if isinstance(obj, DBLPPerson):
-                return obj.pid() + "\n" + str(obj.person())
-            if isinstance(obj, Publication):
-                return str(obj)
-            return json.JSONEncoder.default(self, obj)
 
     with open(dest, 'w', encoding='utf8') as f:
-        json.dump(summary, fp=f, cls=JSONEncoder, indent=2)
+        json.dump(summary, fp=f, indent=2)
 
 
 parser_nx.set_defaults(func=func_parser_nx)

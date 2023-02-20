@@ -1,4 +1,5 @@
 import asyncio
+from .data import CCF_A, CCF_B, CCF_C
 from .downloader import *
 from typing import Optional, Iterator
 import re
@@ -24,11 +25,6 @@ class Person:
                 if child.text is not None:
                     yield child.text
 
-    def __str__(self) -> str:
-        name = self.name()
-        affiliations = "\n".join(str(a) for a in self.affiliations())
-        return "%s\n%s" % (name, affiliations)
-
 
 class Author:
     def __init__(self, data: ElementTree.Element) -> None:
@@ -46,9 +42,6 @@ class Author:
         if data is None:
             return None
         return DBLPPerson(data)
-
-    def __str__(self) -> str:
-        return self.name()
 
 
 class Publication:
@@ -107,13 +100,25 @@ class Publication:
                 return e
         return None
 
-    def __str__(self) -> str:
-        key = self.key()
-        doi = self.doi()
-        authors = ", ".join(str(author) for author in self.authors())
-        title = self.title()
-        journal_year = f"{self.journal()}:{self.year()}"
-        return "%s %s\n\t%s\n\t%s\n\t%s" % (key, doi, authors, title, journal_year)
+    def ccf(self) -> str:
+        j = self.journal_key()
+        for (ccf, ls) in zip(['A', 'B', 'C'], [CCF_A, CCF_B, CCF_C]):
+            if j in ls:
+                return ccf
+        return 'N'
+
+    def __dict__(self) -> dict:
+        return dict(
+            key=self.key(),
+            title=self.title(),
+            journal=self.journal(),
+            journal_key=self.journal_key(),
+            year=self.year(),
+            doi=self.doi(),
+            ccf=self.ccf(),
+            authors=", ".join([author.name() for author in self.authors()])[0:-2],
+            authors_pid=[author.pid() for author in self.authors()],
+        )
 
 
 class DBLPPerson:
@@ -143,10 +148,14 @@ class DBLPPerson:
             if child.tag == "r":
                 yield Publication(child)
 
-    def __str__(self) -> str:
-        person = str(self.person())
-        publications = "\n".join(str(p) for p in self.publications())
-        return "%s\n%s\n\n" % (person, publications)
+    def __dict__(self) -> dict:
+        person = self.person()
+        return dict(
+            pid=self.pid(),
+            name=self.name(),
+            affiliations=list(person.affiliations()),
+            all_publications=[pub.key() for pub in self.publications()]
+        )
 
 
 if __name__ == "__main__":
