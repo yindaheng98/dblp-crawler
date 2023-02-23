@@ -1,5 +1,6 @@
 import abc
 import asyncio
+import json
 import logging
 
 import networkx as nx
@@ -66,22 +67,22 @@ class NetworkxGraph(Graph, metaclass=abc.ABCMeta):
 
         g = self.graph_summary()
 
-        nodes, edges, publications = [], [], {}
+        nodes, edges, publications = {}, {}, {}
         for k, d in g.nodes(data=True):
-            nodes.append({
+            nodes[k] = {
                 'id': k, 'label': d['person'].name(),
                 'person': d['person'].__dict__(),
                 'publications': [pub.key() for pub in d['publications']]
-            })
+            }
             for pub in d['publications']:
                 publications[pub.key()] = pub.__dict__()
             for pub in d['person'].publications():
                 publications[pub.key()] = pub.__dict__()
         for u, v, d in g.edges(data=True):
-            edges.append({
+            edges[json.dumps({'from': u, 'to': v})] = {
                 'from': u, 'to': v,
                 'publications': [pub.key() for pub in d['publications']]
-            })
+            }
             for pub in d['publications']:
                 publications[pub.key()] = pub.__dict__()
         return dict(nodes=nodes, edges=edges, publications=publications)
