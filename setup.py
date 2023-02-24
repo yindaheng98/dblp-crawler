@@ -8,6 +8,7 @@ with open("README.md", "r", encoding='utf8') as fh:
 
 package_dir = {
     'dblp_crawler': 'dblp_crawler',
+    'dblp_crawler.filter': 'dblp_crawler/filter',
     'dblp_crawler.data': 'dblp_crawler/data',
     'dblp_crawler.data.ccf': 'dblp_crawler/data/ccf',
     'dblp_crawler.keyword': 'dblp_crawler/keyword',
@@ -18,7 +19,7 @@ package_dir = {
 
 setup(
     name='dblp_crawler',
-    version='1.3.0',
+    version='1.4.0',
     author='yindaheng98',
     author_email='yindaheng98@163.com',
     url='https://github.com/yindaheng98/dblp-crawler',

@@ -75,6 +75,7 @@ e.g. crawl the paper after 2016 (include 2016)
 ```sh
 python -m dblp_crawler -k video -k edge -p l/JiangchuanLiu -y 2016 networkx --dest summary.json
 ```
+
 ### Keywords with two or more words
 
 e.g. super resolution (publications with title contains both "super" and "resolution" will be selected)
@@ -117,12 +118,23 @@ optional arguments:
                         Filter functions.
 ```
 
-### Drop publication from personal publication list
+### Use internal filter
 
 e.g. `drop_old_publications` is an internal function that drop publication by year
 
 ```sh
 python -m dblp_crawler.filter -i summary.json -o summary.filter.json -f "lambda summary: drop_old_publications(summary, 2016)"
+```
+
+### Use multiple filters
+
+e.g. `drop_old_publications` is an internal function that drop publication by year
+
+```sh
+python -m dblp_crawler.filter -i summary.json -o summary.filter.json \
+  -f "lambda summary: drop_old_publications(summary, 2016)" \
+  -f "lambda summary: drop_nodes_by_publications(summary, 4)" \
+  -f "lambda summary: drop_nodes_by_all_publications(summary, 4)"
 ```
 
 ### Use your own filter
