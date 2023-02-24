@@ -98,3 +98,37 @@ e.g. there is a `CCF_A` in `dblp_crawler.data` contains keys of CCF A conference
 ```sh
 python -m dblp_crawler -k video -k edge -j "importlib.import_module('dblp_crawler.data').CCF_A" networkx --dest summary.json
 ```
+
+## `dblp_crawler.filter` Usage
+
+### Help
+
+```sh
+python -m dblp_crawler.filter -h                                                       
+usage: __main__.py [-h] -i INPUT -o OUTPUT -f FILTER
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i INPUT, --input INPUT
+                        Input file path.
+  -o OUTPUT, --output OUTPUT
+                        Output file path.
+  -f FILTER, --filter FILTER
+                        Filter functions.
+```
+
+### Drop publication from personal publication list
+
+e.g. `drop_old_publications` is an internal function that drop publication by year
+
+```sh
+python -m dblp_crawler.filter -i summary.json -o summary.filter.json -f "lambda summary: drop_old_publications(summary, 2016)"
+```
+
+### Use your own filter
+
+e.g. another method to use `-f "lambda summary: drop_old_publications(summary, 2016)"`
+
+```sh
+python -m dblp_crawler.filter -i summary.json -o summary.filter.json -f "lambda summary: importlib.import_module('dblp_crawler.filter').drop_old_publications(summary, 2016)"
+```
