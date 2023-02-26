@@ -128,11 +128,13 @@ python -m dblp_crawler.filter -i summary.json -o summary.filter.json -f "lambda 
 
 ### Use multiple filters
 
-e.g. `drop_old_publications` is an internal function that drop publication by year
+e.g. `drop_old_publications` is an internal function that drop publications by year; `drop_nodes_by_all_publications` is an internal function that drop nodes by the sum of publications
 
 ```sh
 python -m dblp_crawler.filter -i summary.json -o summary.filter.json \
-  -f "lambda summary: drop_old_person_publications(summary, 2016)" \
+  -f "lambda summary: drop_old_publications(summary, 2016)" \
+  -f "lambda summary: drop_old_person_publications(summary, 2018)" \
+  -f "lambda summary: drop_old_cooperation(summary, 2018)" \
   -f "lambda summary: drop_nodes_by_all_publications(summary, 4)" \
   -f "lambda summary: drop_edges_by_all_publications(summary, 4)"
 ```

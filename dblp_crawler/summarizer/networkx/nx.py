@@ -33,7 +33,9 @@ class NetworkxGraph(Graph, metaclass=abc.ABCMeta):
         )
 
     def summary_cooperation(self, a, b, publications):  # 构建summary
-        return dict(publications=list(publications.values()))
+        a_pub = set(p.key() for p in a.publications())
+        b_pub = set(p.key() for p in b.publications())
+        return dict(publications=list(publications.values()), cooperation=list(a_pub.intersection(b_pub)))
 
     def graph_summary(self):
         """输出一个 networkx.Graph，节点对应作者，每条边对应多篇论文，作者间仅有一条边"""
@@ -67,6 +69,13 @@ class NetworkxGraph(Graph, metaclass=abc.ABCMeta):
 
         g = self.graph_summary()
 
+        def update(pub, selected=False):
+            if pub.key() not in publications:
+                publications[pub.key()] = pub.__dict__()
+            publications[pub.key()] = {**publications[pub.key()], **pub.__dict__()}
+            if selected:
+                publications[pub.key()]['selected'] = True
+
         nodes, edges, publications = {}, {}, {}
         for k, d in g.nodes(data=True):
             nodes[k] = {
@@ -75,14 +84,15 @@ class NetworkxGraph(Graph, metaclass=abc.ABCMeta):
                 'publications': [pub.key() for pub in d['publications']]
             }
             for pub in d['publications']:
-                publications[pub.key()] = pub.__dict__()
+                update(pub, True)
             for pub in d['person'].publications():
-                publications[pub.key()] = pub.__dict__()
+                update(pub)
         for u, v, d in g.edges(data=True):
             edges[json.dumps({'from': u, 'to': v})] = {
                 'from': u, 'to': v,
-                'publications': [pub.key() for pub in d['publications']]
+                'publications': [pub.key() for pub in d['publications']],
+                'cooperation': d['cooperation']
             }
             for pub in d['publications']:
-                publications[pub.key()] = pub.__dict__()
+                update(pub, True)
         return dict(nodes=nodes, edges=edges, publications=publications)

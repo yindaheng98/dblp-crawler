@@ -19,6 +19,11 @@ def map_dict(d, callback):
     return md
 
 
+def map_publications(summary, callback):
+    summary["publications"] = map_dict(summary["publications"], callback)
+    return summary
+
+
 def map_node(summary, callback):
     summary["nodes"] = map_dict(summary["nodes"], lambda k, v: callback(k, v))
     edges = {}
@@ -59,11 +64,18 @@ def map_edge(summary, callback):
     return summary
 
 
-def map_edge_all_publications(summary, callback):
+def map_cooperation(summary, callback):
     def callback_edge(_, edge):
-        from_publications = summary["nodes"][edge["from"]]["person"]["publications"]
-        to_publications = summary["nodes"][edge["to"]]["person"]["publications"]
-        publications = set(from_publications).intersection(to_publications)
-        return callback(edge, publications)
+        publications = edge["cooperation"]
+        mapped_publications = []
+        for key in publications:
+            if key not in summary["publications"]:
+                continue
+            publication = callback(edge, summary["publications"][key])
+            if publication is None:
+                continue
+            mapped_publications.append(publication["key"])
+        edge["cooperation"] = mapped_publications
+        return edge
 
     return map_edge(summary, callback_edge)
