@@ -29,7 +29,7 @@ class JournalList:
         h1 = self.data.find('./h1').text
         v2 = [proceedings.find('./url').text
               for proceedings in self.data.findall('./dblpcites/r/proceedings')
-              if proceedings.find('./booktitle').text == h1]
+              if proceedings.find('./booktitle') is None or proceedings.find('./booktitle').text == h1]
         return v1 + v2
 
     async def journals(self) -> AsyncIterator[Journal]:

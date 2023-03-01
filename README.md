@@ -101,7 +101,7 @@ python -m dblp_crawler -k video -k edge -p l/JiangchuanLiu -k "'super','resoluti
 e.g. init authors from ACM MM (`db/conf/mm` is the key for ACM MM in dblp: "https://dblp.org/db/conf/mm/index.xml")
 
 ```sh
-python -m dblp_crawler -k video -k edge -j db/conf/mm networkx --dest summary.json
+python -m dblp_crawler -k video -k edge -j db/conf/fast networkx --dest summary.json
 ```
 
 ### Init authors from journal in some variables
