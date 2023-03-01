@@ -50,7 +50,6 @@ async def download_journal(pid: str) -> Optional[ElementTree.Element]:
 async def download_item(path: str, cache_days: int) -> Optional[ElementTree.Element]:
     save_path = os.path.join("save", path)
     if os.path.isfile(save_path):
-        print(datetime.now(), get_cache_datetime(save_path) + timedelta(days=cache_days))
         if datetime.now() < get_cache_datetime(save_path) + timedelta(days=cache_days):
             async with file_sem:
                 try:
