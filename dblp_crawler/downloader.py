@@ -26,7 +26,7 @@ def getenv_int(key) -> int:
 
 
 def get_cache_datetime(path) -> datetime:
-    return datetime.fromtimestamp(min(os.path.getatime(path), os.path.getctime(path), os.path.getmtime(path)))
+    return datetime.fromtimestamp(os.path.getmtime(path))
 
 
 async def download_person(pid: str) -> Optional[ElementTree.Element]:
@@ -50,6 +50,7 @@ async def download_journal(pid: str) -> Optional[ElementTree.Element]:
 async def download_item(path: str, cache_days: int) -> Optional[ElementTree.Element]:
     save_path = os.path.join("save", path)
     if os.path.isfile(save_path):
+        print(datetime.now(), get_cache_datetime(save_path) + timedelta(days=cache_days))
         if datetime.now() < get_cache_datetime(save_path) + timedelta(days=cache_days):
             async with file_sem:
                 try:

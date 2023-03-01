@@ -19,7 +19,7 @@ package_dir = {
 
 setup(
     name='dblp_crawler',
-    version='1.6.0',
+    version='1.6.1',
     author='yindaheng98',
     author_email='yindaheng98@163.com',
     url='https://github.com/yindaheng98/dblp-crawler',
