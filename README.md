@@ -52,6 +52,18 @@ optional arguments:
   --uri URI    URI to neo4j database.
 ```
 
+### Config environment variables
+
+* `DBLP_CRAWLER_MAX_CACHE_DAYS_PERSON`: 
+  * save cache for a person page for how many days
+  * default: `30`
+* `DBLP_CRAWLER_MAX_CACHE_DAYS_JOURNAL`: 
+  * save cache for a journal page for how many days
+  * default: `300`
+* `DBLP_CRAWLER_MAX_CACHE_DAYS_JOURNAL_LIST`
+  * save cache for a journal list page for how many days
+  * default: `300`
+
 ### Write to a JSON file
 
 e.g. write to `summary.json`:
