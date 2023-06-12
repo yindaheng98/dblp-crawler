@@ -1,5 +1,4 @@
 import abc
-import asyncio
 import logging
 from typing import Optional
 
@@ -9,6 +8,18 @@ from dblp_crawler import Graph, DBLPPerson, Publication
 
 logger = logging.getLogger("graph")
 
+def add_publication(tx, publication):
+    n4jset = "MERGE (p:Publication {key:$key}) SET p.title=$title, p.journal_key=$journal_key, p.journal=$journal, p.year=$year"
+    if publication.doi():
+        n4jset += ", p.doi=$doi"
+    tx.run(n4jset,
+            key=publication.key(),
+            title=publication.title(),
+            journal_key=publication.journal_key() or "",
+            journal=publication.journal() or "",
+            year=publication.year(),
+            doi=publication.doi())
+
 
 def add_person(tx, person: DBLPPerson, added_pubs: set):
     tx.run("MERGE (a:Person {pid: $pid, name: $name})", pid=person.pid(), name=person.name())
@@ -16,33 +27,23 @@ def add_person(tx, person: DBLPPerson, added_pubs: set):
         if publication.key() in added_pubs:
             continue
         added_pubs.add(publication.key())
-        tx.run("MATCH (a:Person) WHERE a.pid = $pid "
-               "MERGE (p:Publication {key:$key, title:$title, journal_key:$journal_key, journal:$journal, year:$year}) "
+        tx.run("MERGE (a:Person {pid: $pid}) "
+               "MERGE (p:Publication {key: $key}) "
                "MERGE (a)-[:WRITE]->(p)",
                pid=person.pid(),
-               key=publication.key(),
-               title=publication.title(),
-               journal_key=publication.journal_key() or "",
-               journal=publication.journal() or "",
-               year=publication.year())
-        if publication.doi():
-            tx.run("MATCH (p:Publication {key:$key}) SET p.doi=$doi",
-                key=publication.key(),
-                doi=publication.doi())
+               key=publication.key())
+        add_publication(tx, publication)
 
 
 def add_edge(tx, a: str, b: str, publication: Publication):
-    tx.run("MATCH (a:Person) WHERE a.pid = $a "
-           "MATCH (b:Person) WHERE b.pid = $b "
-           "MATCH (p:Publication) WHERE p.key = $key "
+    tx.run("MERGE (a:Person {pid: $a}) "
+           "MERGE (b:Person {pid: $b}) "
+           "MERGE (p:Publication {key: $key}) "
            "MERGE (a)-[:WRITE]->(p)"
            "MERGE (b)-[:WRITE]->(p)",
            a=a, b=b,
-           key=publication.key(),
-           title=publication.title(),
-           journal_key=publication.journal_key(),
-           journal=publication.journal(),
-           year=publication.year())
+           key=publication.key())
+    add_publication(tx, publication)
 
 
 class Neo4jGraph(Graph, metaclass=abc.ABCMeta):
