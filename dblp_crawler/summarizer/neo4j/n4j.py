@@ -25,12 +25,16 @@ def add_person(tx, person: DBLPPerson, added_pubs: set):
                journal_key=publication.journal_key() or "",
                journal=publication.journal() or "",
                year=publication.year())
+        if publication.doi():
+            tx.run("MATCH (p:Publication {key:$key}) SET p.doi=$doi",
+                key=publication.key(),
+                doi=publication.doi())
 
 
 def add_edge(tx, a: str, b: str, publication: Publication):
     tx.run("MATCH (a:Person) WHERE a.pid = $a "
            "MATCH (b:Person) WHERE b.pid = $b "
-           "MERGE (p:Publication {key:$key, title:$title, journal_key:$journal_key, journal:$journal, year:$year, selected: true}) "
+           "MATCH (p:Publication) WHERE p.key = $key "
            "MERGE (a)-[:WRITE]->(p)"
            "MERGE (b)-[:WRITE]->(p)",
            a=a, b=b,

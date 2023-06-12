@@ -66,7 +66,7 @@ async def download_item(path: str, cache_days: int) -> Optional[ElementTree.Elem
     url = "https://dblp.org/" + path
     async with http_sem:
         try:
-            async with aiohttp.ClientSession() as session:
+            async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
                 async with session.get(url) as response:
                     logger.info(" download: %s" % path)
                     html = await response.text()
