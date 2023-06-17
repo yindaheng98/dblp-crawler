@@ -37,6 +37,9 @@ class Author:
     def pid(self) -> str:
         return self.data.attrib['pid']
 
+    def orcid(self) -> str:
+        return self.data.attrib['orcid'] if 'orcid' in self.data.attrib else None
+
     async def dblpperson(self):
         data = await download_person(self.pid())
         if data is None:
@@ -118,6 +121,7 @@ class Publication:
             ccf=self.ccf(),
             authors=", ".join([author.name() for author in self.authors()])[0:-2],
             authors_pid=[author.pid() for author in self.authors()],
+            authors_orcid=[author.orcid() for author in self.authors()],
         )
 
 

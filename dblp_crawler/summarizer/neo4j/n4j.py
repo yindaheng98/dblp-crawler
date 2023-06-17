@@ -8,17 +8,18 @@ from dblp_crawler import Graph, DBLPPerson, Publication
 
 logger = logging.getLogger("graph")
 
+
 def add_publication(tx, publication):
     n4jset = "MERGE (p:Publication {key:$key}) SET p.title=$title, p.journal_key=$journal_key, p.journal=$journal, p.year=$year"
     if publication.doi():
         n4jset += ", p.doi=$doi"
     tx.run(n4jset,
-            key=publication.key(),
-            title=publication.title(),
-            journal_key=publication.journal_key() or "",
-            journal=publication.journal() or "",
-            year=publication.year(),
-            doi=publication.doi())
+           key=publication.key(),
+           title=publication.title(),
+           journal_key=publication.journal_key() or "",
+           journal=publication.journal() or "",
+           year=publication.year(),
+           doi=publication.doi())
 
 
 def add_person(tx, person: DBLPPerson, added_pubs: set):
@@ -36,6 +37,16 @@ def add_person(tx, person: DBLPPerson, added_pubs: set):
 
 
 def add_edge(tx, a: str, b: str, publication: Publication):
+    for author in publication.authors():
+        if author.pid() in [a, b]:
+            n4jset = "MERGE (a:Person {pid: $pid}) SET a.name=$name"
+            if author.orcid():
+                n4jset += ", a.orcid=$orcid"
+            tx.run(n4jset,
+                   pid=author.pid(),
+                   name=author.name(),
+                   orcid=author.orcid())
+    add_publication(tx, publication)
     tx.run("MERGE (a:Person {pid: $a}) "
            "MERGE (b:Person {pid: $b}) "
            "MERGE (p:Publication {key: $key}) "
