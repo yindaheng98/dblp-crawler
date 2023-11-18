@@ -4,6 +4,10 @@ Asynchronous high-concurrency dblp crawler, use with caution!
 
 异步高并发dblp爬虫，慎用！
 
+Crawl papers from dblp and connect them into an undirected graph. Each edge is a paper, each node is an author.
+
+从dblp爬文章并将其组织为无向图。图的边是文章，节点是作者。
+
 ## Install
 
 ```sh
@@ -11,8 +15,6 @@ pip install dblp-crawler
 ```
 
 ## Usage
-
-### Help
 
 ```sh
 python -m dblp_crawler -h
@@ -58,11 +60,11 @@ optional arguments:
   * save cache for a person page for how many days
   * default: `30`
 * `DBLP_CRAWLER_MAX_CACHE_DAYS_JOURNAL`: 
-  * save cache for a journal page for how many days
-  * default: `300`
+  * save cache for a journal page (e.g. [IEEE Transactions on Multimedia Volume 25, 2023](https://dblp.org/db/journals/tmm/tmm25.xml)) or conference page (e.g. [31st ACM Multimedia 2023](https://dblp.org/db/conf/mm/mm2023.xml)) for how many days
+  * default: `-1` (cache forever)
 * `DBLP_CRAWLER_MAX_CACHE_DAYS_JOURNAL_LIST`
-  * save cache for a journal list page for how many days
-  * default: `300`
+  * save cache for a journal list page (e.g. [IEEE Transactions on Multimedia](https://dblp.org/db/journals/tmm/index.xml)) or conference list page (e.g. [ACM Multimedia](https://dblp.org/db/conf/mm/index.xml)) for how many days
+  * default: `30`
 
 ### Write to a JSON file
 
@@ -98,23 +100,25 @@ python -m dblp_crawler -k video -k edge -p l/JiangchuanLiu -k "'super','resoluti
 
 ### Init authors from journal
 
-e.g. init authors from ACM MM (`db/conf/mm` is the key for ACM MM in dblp: "https://dblp.org/db/conf/mm/index.xml")
+e.g. init authors from ACM MM and MMSys (`db/conf/mm` is the key for ACM MM in dblp: "https://dblp.org/db/conf/mm/index.xml", `db/conf/mmsys` is the key for MMSys in dblp: "https://dblp.org/db/conf/mmsys/index.xml")
 
 ```sh
-python -m dblp_crawler -k video -k edge -j db/conf/fast networkx --dest summary.json
+python -m dblp_crawler -k video -k edge -j db/conf/mm -j db/conf/mmsys networkx --dest summary.json
 ```
 
 ### Init authors from journal in some variables
 
-e.g. there is a `CCF_A` in `dblp_crawler.data` contains keys of CCF A conferences
+e.g. there is a `CCF_A` in `dblp_crawler.data` contains keys of CCF A conferences, and MMSys is also great but not in CCF A
 
 ```sh
-python -m dblp_crawler -k video -k edge -j "importlib.import_module('dblp_crawler.data').CCF_A" networkx --dest summary.json
+python -m dblp_crawler -k video -k edge -j "importlib.import_module('dblp_crawler.data').CCF_A" -j db/conf/mmsys networkx --dest summary.json
 ```
+
+`importlib.import_module` is flexible, you can import your own variables through this.
 
 ## `dblp_crawler.filter` Usage
 
-### Help
+Crawling papers takes a long time, so do not filter the papers in the crawling process. Instead, use a separate program `dblp_crawler`.filter` to filter the papers.
 
 ```sh
 python -m dblp_crawler.filter -h                                                       
@@ -158,3 +162,5 @@ e.g. another method to use `-f "lambda summary: drop_old_publications(summary, 2
 ```sh
 python -m dblp_crawler.filter -i summary.json -o summary.filter.json -f "lambda summary: importlib.import_module('dblp_crawler.filter').drop_old_publications(summary, 2016)"
 ```
+
+`importlib.import_module` is flexible, you can import your own variables through this.
