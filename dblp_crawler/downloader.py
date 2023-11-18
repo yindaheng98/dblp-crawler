@@ -54,12 +54,12 @@ async def download_item(path: str, cache_days: int) -> Optional[ElementTree.Elem
             async with file_sem:
                 try:
                     async with async_open(save_path, 'r') as f:
-                        logger.info("use cache: %s" % save_path)
+                        logger.debug("use cache: %s" % save_path)
                         html = await f.read()
                         data = ElementTree.fromstring(html)
                         return data
                 except:
-                    logger.debug(" no cache: %s" % save_path)
+                    logger.info(" no cache: %s" % save_path)
         else:
             logger.info('cache outdated: %s' % save_path)
 

@@ -92,17 +92,18 @@ class Graph(metaclass=abc.ABCMeta):
                         tasks.append(asyncio.create_task(self.download_person(author.pid())))  # 就获取作者
                         self.persons[author.pid()] = None  # 并记录之
                         author_count += 1
-            logger.info("there are %d authors in %d %s's publications" % (author_count, publication_count, pid))
+            logger.info("There are %d authors in %d %s's publications" % (author_count, publication_count, pid))
             total_author_count += author_count
             total_publication_count += publication_count
-        logger.info("there are %d authors in %d publications" % (total_author_count, total_publication_count))
+        logger.info("%d authors from %d publications is fetching" % (total_author_count, total_publication_count))
         await asyncio.gather(*tasks)
         logger.info("%d authors added from %d publications" % (total_author_count, total_publication_count))
         remain_none = 0
         for person in self.persons.values():
             if person is None:
                 remain_none += 1
-        logger.info("There are %d authors need to be downloaded in next loop" % remain_none)
+        logger.info("There are %d authors need init in next loop" % remain_none)
+        logger.info("There are %d authors need publications fetching in next loop" % total_author_count)
         return remain_none, total_author_count
 
     @abc.abstractmethod

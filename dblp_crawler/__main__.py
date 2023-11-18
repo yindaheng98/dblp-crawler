@@ -16,6 +16,7 @@ logger = logging.getLogger('dblp_crawler')
 parser = argparse.ArgumentParser()
 
 parser.add_argument("-y", "--year", type=int, help="Only crawl the paper after the specified year.", default=2000)
+parser.add_argument("-l", "--limit", type=int, help="Limitation of BFS depth.", default=-1)
 add_argument_kw(parser)
 add_argument_pid(parser)
 add_argument_journal(parser)
@@ -24,12 +25,14 @@ add_argument_journal(parser)
 def func_parser(parser):
     args = parser.parse_args()
     year = args.year
+    limit = args.limit
     keywords = parse_args_kw(parser)
     pid_list, journal_list = parse_args_pid_journal(parser)
     logger.info(f"Specified keyword rules: {keywords.rules}")
-    logger.info(f"Specified pid_list for init: {pid_list}")
-    logger.info(f"Specified journal_list for init: {journal_list}")
-    return year, keywords, pid_list, journal_list
+    logger.info(f"Specified persons for init: {pid_list}")
+    logger.info(f"Specified journals or conferences for init: {journal_list}")
+    logger.info(f"Specified BFS depth limitation: {limit}")
+    return year, keywords, pid_list, journal_list, limit
 
 
 def filter_publications_at_crawler(publications, keywords: Keywords):
@@ -45,7 +48,7 @@ def filter_publications_at_output(publications, year: int, keywords: Keywords):
 
 
 async def bfs_to_end(graph, limit: int = 0):
-    while min(*(await graph.bfs_once())) > 0 and (limit != 0):
+    while max(*(await graph.bfs_once())) > 0 and (limit != 0):
         logger.info("Still running......")
         limit -= 1
 
@@ -73,12 +76,12 @@ parser_nx.add_argument("--dest", type=str, required=True, help=f'Path to write r
 
 
 def func_parser_nx(parser):
-    year, keywords, pid_list, journal_list = func_parser(parser)
+    year, keywords, pid_list, journal_list, limit = func_parser(parser)
     args = parser.parse_args()
     dest = args.dest
     logger.info(f"Specified dest: {dest}")
     g = NetworkxGraphDefault(year=year, keywords=keywords, pid_list=pid_list, journal_list=journal_list)
-    asyncio.get_event_loop().run_until_complete(bfs_to_end(g))
+    asyncio.get_event_loop().run_until_complete(bfs_to_end(g, limit))
     summary = g.dict_summary()
 
     import json
@@ -113,7 +116,7 @@ parser_n4j.add_argument("--uri", type=str, required=True, help=f'URI to neo4j da
 
 def func_parser_n4j(parser):
     from neo4j import GraphDatabase
-    year, keywords, pid_list, journal_list = func_parser(parser)
+    year, keywords, pid_list, journal_list, limit = func_parser(parser)
     args = parser.parse_args()
     logger.info(f"Specified uri and auth: {args.uri} {args.auth}")
 
@@ -122,7 +125,7 @@ def func_parser_n4j(parser):
             g = Neo4jGraphDefault(
                 year=year, keywords=keywords, session=session,
                 pid_list=pid_list, journal_list=journal_list)
-            asyncio.get_event_loop().run_until_complete(bfs_to_end(g))
+            asyncio.get_event_loop().run_until_complete(bfs_to_end(g, limit))
             logger.info(f"Summarizing to: {args.uri}")
             g.summarize()
 
