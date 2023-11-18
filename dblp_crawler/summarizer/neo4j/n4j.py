@@ -9,10 +9,12 @@ from dblp_crawler import Graph, DBLPPerson, Publication
 logger = logging.getLogger("graph")
 
 
-def add_publication(tx, publication):
+def add_publication(tx, publication, selected=False):
     n4jset = "MERGE (p:Publication {key:$key}) SET p.title=$title, p.journal_key=$journal_key, p.journal=$journal, p.year=$year"
     if publication.doi():
         n4jset += ", p.doi=$doi"
+    if selected:
+        n4jset += ", p.selected=true"
     tx.run(n4jset,
            key=publication.key(),
            title=publication.title(),
@@ -46,7 +48,7 @@ def add_edge(tx, a: str, b: str, publication: Publication):
                    pid=author.pid(),
                    name=author.name(),
                    orcid=author.orcid())
-    add_publication(tx, publication)
+    add_publication(tx, publication, selected=True)
     tx.run("MERGE (a:Person {pid: $a}) "
            "MERGE (b:Person {pid: $b}) "
            "MERGE (p:Publication {key: $key}) "
@@ -54,7 +56,6 @@ def add_edge(tx, a: str, b: str, publication: Publication):
            "MERGE (b)-[:WRITE]->(p)",
            a=a, b=b,
            key=publication.key())
-    add_publication(tx, publication)
 
 
 class Neo4jGraph(Graph, metaclass=abc.ABCMeta):

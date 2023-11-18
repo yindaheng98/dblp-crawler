@@ -153,10 +153,15 @@ python -m dblp_crawler -k video -k edge -p l/JiangchuanLiu networkx --dest summa
 
 ### Write to a Neo4J database
 
-e.g. write to `neo4j://10.128.202.18:7687`:
+```sh
+docker pull neo4j
+docker run --rm -it -p 7474:7474 -p 7687:7687 -e NEO4J_AUTH=none neo4j
+```
+
+e.g. write to `neo4j://localhost:7687`:
 
 ```sh
-python -m dblp_crawler -k video -k edge -p l/JiangchuanLiu neo4j --uri neo4j://10.128.202.18:7687
+python -m dblp_crawler -k video -k edge -p l/JiangchuanLiu neo4j --uri neo4j://localhost:7687
 ```
 
 ### Only crawl the paper after specified year
