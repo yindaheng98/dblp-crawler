@@ -119,9 +119,12 @@ class Publication:
             year=self.year(),
             doi=self.doi(),
             ccf=self.ccf(),
-            authors=", ".join([author.name() for author in self.authors()])[0:-2],
-            authors_pid=[author.pid() for author in self.authors()],
-            authors_orcid=[author.orcid() for author in self.authors()],
+            authors={
+                author.pid(): {
+                    "name": author.name(),
+                    "orcid": author.orcid(),
+                } for author in self.authors()
+            },
         )
 
 
@@ -165,10 +168,8 @@ class DBLPPerson:
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
 
-
     async def main() -> None:
         print(DBLPPerson(await download_person('74/1552-1')))
-
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())
