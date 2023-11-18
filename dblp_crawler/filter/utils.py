@@ -19,11 +19,6 @@ def map_dict(d, callback):
     return md
 
 
-def map_publications(summary, callback):
-    summary["publications"] = map_dict(summary["publications"], callback)
-    return summary
-
-
 def map_node(summary, callback):
     summary["nodes"] = map_dict(summary["nodes"], lambda k, v: callback(k, v))
     edges = {}

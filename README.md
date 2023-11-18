@@ -74,6 +74,83 @@ e.g. write to `summary.json`:
 python -m dblp_crawler -k video -k edge -p l/JiangchuanLiu networkx --dest summary.json
 ```
 
+#### JSON format
+
+```json
+{
+  "nodes": { // each node is a person
+    "<dblp id of a person>": {
+      "id": "<dblp id of this person>",
+      "label": "<name in dblp>",
+      "publications": [ // selected papers of this person (selected by "-k" and "-y" args)
+        "<dblp id of a paper>",
+        "<dblp id of a paper>",
+        "<dblp id of a paper>",
+        "......"
+      ],
+      "person": { // detailed data of this person
+        "pid": "<dblp id of this person>",
+        "name": "<name in dblp>",
+        "affiliations": [
+          "<affiliation of this person>",
+          "<affiliation of this person>",
+          "......"
+        ],
+        "publications": [ // all papers of this person
+        "<dblp id of a paper>",
+        "<dblp id of a paper>",
+        "<dblp id of a paper>",
+        "......"
+        ]
+      }
+    },
+    "<dblp id of a person>": { ...... },
+    "<dblp id of a person>": { ...... },
+    "<dblp id of a person>": { ...... },
+    ......
+  },
+  "edges": { // each node is a cooperation of two person
+    "<id of this edge>": {
+      "from": "<dblp id of this person 1>",
+      "to": "<dblp id of this person 2>",
+      "publications": [ // selected papers that contain both this two persons as authors (selected by "-k" and "-y" args)
+        "<dblp id of a paper>",
+        "<dblp id of a paper>",
+        "<dblp id of a paper>",
+        "......"
+      ],
+      "cooperation": [ // all papers that contain both this two persons as authors (selected by "-k" and "-y" args)
+        "<dblp id of a paper>",
+        "<dblp id of a paper>",
+        "<dblp id of a paper>",
+        "......"
+      ]
+    },
+    "publications": { // related publications
+      "<dblp id of a paper>": {
+      "key": "<dblp id of this paper>",
+      "title": "<title of this paper>",
+      "journal": "<name of the journal that this paper published on>",
+      "journal_key": "<dblp id of the journal that this paper published on>",
+      "year": "int <publish year of this paper>",
+      "doi": "<doi of this paper>",
+      "ccf": "A|B|C|N <CCF rank of this paper>",
+      "authors": {
+        "<dblp id of a person>": {
+          "name": "<name in dblp>",
+          "orcid": "<orcid of this person>"
+        },
+        "<dblp id of a person>": { ...... },
+        "<dblp id of a person>": { ...... },
+        ......
+      },
+      "selected": "true|false <whether the publication is selected (selected by -k and -y args)>"
+      }
+    }
+  }
+}
+```
+
 ### Write to a Neo4J database
 
 e.g. write to `neo4j://10.128.202.18:7687`:
@@ -148,7 +225,6 @@ e.g. `drop_old_publications` is an internal function that drop publications by y
 
 ```sh
 python -m dblp_crawler.filter -i summary.json -o summary.filter.json \
-  -f "lambda summary: drop_old_publications(summary, 2016)" \
   -f "lambda summary: drop_old_person_publications(summary, 2018)" \
   -f "lambda summary: drop_old_cooperation(summary, 2018)" \
   -f "lambda summary: drop_nodes_by_all_publications(summary, 4)" \

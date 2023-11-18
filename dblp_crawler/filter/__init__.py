@@ -1,14 +1,4 @@
-from .utils import map_publications, map_person_publications, map_node, map_edge, map_cooperation
-
-
-def drop_old_publications(summary, year):
-    def callback(_, publication):
-        if "selected" in publication and publication["selected"]:
-            return publication
-        if publication["year"] >= year:
-            return publication
-
-    return map_publications(summary, callback)
+from .utils import map_person_publications, map_node, map_edge, map_cooperation
 
 
 def drop_old_person_publications(summary, year):
