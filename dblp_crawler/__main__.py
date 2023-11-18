@@ -35,13 +35,7 @@ def func_parser(parser):
     return year, keywords, pid_list, journal_list, limit
 
 
-def filter_publications_at_crawler(publications, keywords: Keywords):
-    for publication in publications:
-        if keywords.match_words(publication.title()):
-            yield publication
-
-
-def filter_publications_at_output(publications, year: int, keywords: Keywords):
+def filter_publications_at_crawler(publications, year: int, keywords: Keywords):
     for publication in publications:
         if publication.year() >= year and keywords.match(publication.title()):
             yield publication
@@ -65,10 +59,10 @@ class NetworkxGraphDefault(NetworkxGraph):
         self.keywords = keywords
 
     def filter_publications_at_crawler(self, publications: Iterable[Publication]) -> Iterable[Publication]:
-        yield from filter_publications_at_crawler(publications, self.keywords)
+        yield from filter_publications_at_crawler(publications, self.year, self.keywords)
 
     def filter_publications_at_output(self, publications: Iterable[Publication]) -> Iterable[Publication]:
-        yield from filter_publications_at_output(publications, self.year, self.keywords)
+        yield from publications
 
 
 parser_nx = subparsers.add_parser('networkx', help='Write results to a json file.')
@@ -103,10 +97,10 @@ class Neo4jGraphDefault(Neo4jGraph):
         self.keywords = keywords
 
     def filter_publications_at_crawler(self, publications: Iterable[Publication]) -> Iterable[Publication]:
-        yield from filter_publications_at_crawler(publications, self.keywords)
+        yield from filter_publications_at_crawler(publications, self.year, self.keywords)
 
     def filter_publications_at_output(self, publications: Iterable[Publication]) -> Iterable[Publication]:
-        yield from filter_publications_at_output(publications, self.year, self.keywords)
+        yield from publications
 
 
 parser_n4j = subparsers.add_parser('neo4j', help='Write result to neo4j database')
