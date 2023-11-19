@@ -21,7 +21,7 @@ setup(
     name='dblp_crawler',
     version='1.6.10',
     author='yindaheng98',
-    author_email='yindaheng98@163.com',
+    author_email='yindaheng98@gmail.com',
     url='https://github.com/yindaheng98/dblp-crawler',
     description=u'异步高并发dblp爬虫，慎用',
     long_description=long_description,
