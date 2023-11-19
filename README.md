@@ -65,6 +65,8 @@ optional arguments:
 * `DBLP_CRAWLER_MAX_CACHE_DAYS_JOURNAL_LIST`
   * save cache for a journal list page (e.g. [IEEE Transactions on Multimedia](https://dblp.org/db/journals/tmm/index.xml)) or conference list page (e.g. [ACM Multimedia](https://dblp.org/db/conf/mm/index.xml)) for how many days
   * default: `30`
+* `HTTP_PROXY`
+  * Set it `http://your_user:your_password@your_proxy_url:your_proxy_port` if you want to use proxy
 
 ### Write to a JSON file
 

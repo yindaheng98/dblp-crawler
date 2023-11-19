@@ -67,7 +67,7 @@ async def download_item(path: str, cache_days: int) -> Optional[ElementTree.Elem
     async with http_sem:
         try:
             async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
-                async with session.get(url) as response:
+                async with session.get(url, proxy=os.getenv("HTTP_PROXY")) as response:
                     logger.info(" download: %s" % path)
                     html = await response.text()
                     data = ElementTree.fromstring(html)
