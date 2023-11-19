@@ -124,6 +124,7 @@ class Publication:
             ccf=self.ccf(),
             authors={
                 author.pid(): {
+                    "dblp_pid": author.pid(),
                     "name": author.name(),
                     "orcid": author.orcid(),
                 } for author in self.authors()
@@ -161,7 +162,7 @@ class DBLPPerson:
     def __dict__(self) -> dict:
         person = self.person()
         return dict(
-            pid=self.pid(),
+            dblp_pid=self.pid(),
             name=self.name(),
             affiliations=list(person.affiliations()),
             publications=[pub.key() for pub in self.publications()]

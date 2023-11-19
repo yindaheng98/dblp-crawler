@@ -27,12 +27,12 @@ def add_publication(tx, publication, selected=False):
 
 
 def add_person(tx, person: DBLPPerson, added_pubs: set):
-    tx.run("MERGE (a:Person {pid: $pid}) SET a.name=$name, a.affiliations=$aff", pid=person.pid(), name=person.name(), aff=list(person.person().affiliations()))
+    tx.run("MERGE (a:Person {dblp_pid: $pid}) SET a.name=$name, a.affiliations=$aff", pid=person.pid(), name=person.name(), aff=list(person.person().affiliations()))
     for publication in person.publications():
         if publication.key() in added_pubs:
             continue
         added_pubs.add(publication.key())
-        tx.run("MERGE (a:Person {pid: $pid}) "
+        tx.run("MERGE (a:Person {dblp_pid: $pid}) "
                "MERGE (p:Publication {title_hash: $title_hash}) "
                "MERGE (a)-[:WRITE]->(p)",
                pid=person.pid(),
@@ -43,7 +43,7 @@ def add_person(tx, person: DBLPPerson, added_pubs: set):
 def add_edge(tx, a: str, b: str, publication: Publication):
     for author in publication.authors():
         if author.pid() in [a, b]:
-            n4jset = "MERGE (a:Person {pid: $pid}) SET a.name=$name"
+            n4jset = "MERGE (a:Person {dblp_pid: $pid}) SET a.name=$name"
             if author.orcid():
                 n4jset += ", a.orcid=$orcid"
             tx.run(n4jset,
@@ -51,8 +51,8 @@ def add_edge(tx, a: str, b: str, publication: Publication):
                    name=author.name(),
                    orcid=author.orcid())
     add_publication(tx, publication, selected=True)
-    tx.run("MERGE (a:Person {pid: $a}) "
-           "MERGE (b:Person {pid: $b}) "
+    tx.run("MERGE (a:Person {dblp_pid: $a}) "
+           "MERGE (b:Person {dblp_pid: $b}) "
            "MERGE (p:Publication {title_hash: $title_hash}) "
            "MERGE (a)-[:WRITE]->(p)"
            "MERGE (b)-[:WRITE]->(p)",

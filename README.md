@@ -89,7 +89,7 @@ python -m dblp_crawler -k video -k edge -p l/JiangchuanLiu networkx --dest summa
         "......"
       ],
       "person": { // detailed data of this person
-        "pid": "<dblp id of this person>",
+        "dblp_pid": "<dblp id of this person>",
         "name": "<name in dblp>",
         "affiliations": [
           "<affiliation of this person>",
