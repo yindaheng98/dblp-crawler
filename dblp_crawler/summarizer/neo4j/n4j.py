@@ -10,12 +10,13 @@ logger = logging.getLogger("graph")
 
 
 def add_publication(tx, publication, selected=False):
-    n4jset = "MERGE (p:Publication {key:$key}) SET p.title=$title, p.journal_key=$journal_key, p.journal=$journal, p.year=$year"
+    n4jset = "MERGE (p:Publication {title_hash:$title_hash}) SET p.dblp_id=$key, p.title=$title, p.journal_dblp_id=$journal_key, p.journal=$journal, p.year=$year"
     if publication.doi():
         n4jset += ", p.doi=$doi"
     if selected:
         n4jset += ", p.selected=true"
     tx.run(n4jset,
+           title_hash=publication.title_hash(),
            key=publication.key(),
            title=publication.title(),
            journal_key=publication.journal_key() or "",
@@ -31,10 +32,10 @@ def add_person(tx, person: DBLPPerson, added_pubs: set):
             continue
         added_pubs.add(publication.key())
         tx.run("MERGE (a:Person {pid: $pid}) "
-               "MERGE (p:Publication {key: $key}) "
+               "MERGE (p:Publication {title_hash: $title_hash}) "
                "MERGE (a)-[:WRITE]->(p)",
                pid=person.pid(),
-               key=publication.key())
+               title_hash=publication.title_hash())
         add_publication(tx, publication)
 
 
@@ -51,11 +52,11 @@ def add_edge(tx, a: str, b: str, publication: Publication):
     add_publication(tx, publication, selected=True)
     tx.run("MERGE (a:Person {pid: $a}) "
            "MERGE (b:Person {pid: $b}) "
-           "MERGE (p:Publication {key: $key}) "
+           "MERGE (p:Publication {title_hash: $title_hash}) "
            "MERGE (a)-[:WRITE]->(p)"
            "MERGE (b)-[:WRITE]->(p)",
            a=a, b=b,
-           key=publication.key())
+           title_hash=publication.title_hash())
 
 
 class Neo4jGraph(Graph, metaclass=abc.ABCMeta):

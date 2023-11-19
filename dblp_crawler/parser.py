@@ -64,7 +64,9 @@ class Publication:
         for child in self.data:
             if child.tag == "title":
                 return " ".join(t for t in child.itertext())
-        return None
+
+    def title_hash(self) -> Optional[str]:
+        return re.sub(r"[^0-9a-z]", "", self.title().lower())
 
     def journal(self) -> Optional[str]:
         tag = {
