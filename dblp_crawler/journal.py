@@ -1,4 +1,5 @@
 import logging
+import asyncio
 from typing import AsyncIterator
 import xml.etree.ElementTree as ElementTree
 from .parser import Publication
@@ -33,8 +34,7 @@ class JournalList:
         return v1 + v2
 
     async def journals(self) -> AsyncIterator[Journal]:
-        for jid in self.journal_keys():
-            data = await download_journal(jid)
+        for data in await asyncio.gather(*[download_journal(jid) for jid in self.journal_keys()]):
             if data is not None:
                 yield Journal(data)
 
@@ -48,7 +48,6 @@ if __name__ == "__main__":
     import asyncio
     from dblp_crawler import download_journal_list
 
-
     async def main() -> None:
         data = await download_journal_list('db/journals/tmm')
         if data is None:
@@ -60,6 +59,5 @@ if __name__ == "__main__":
             if i >= 100:
                 break
             print(publication)
-
 
     asyncio.run(main())

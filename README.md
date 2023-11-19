@@ -67,6 +67,9 @@ optional arguments:
   * default: `30`
 * `HTTP_PROXY`
   * Set it `http://your_user:your_password@your_proxy_url:your_proxy_port` if you want to use proxy
+* `HTTP_CONCORRENT`
+  * Concurrent HTTP requests
+  * default: `8`
 
 ### Write to a JSON file
 

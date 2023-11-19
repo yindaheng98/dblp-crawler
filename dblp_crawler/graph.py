@@ -20,8 +20,7 @@ class Graph(metaclass=abc.ABCMeta):
     async def init_persons_from_journals(self) -> None:
         author_count = 0
         publication_count = 0
-        for jid in self.init_journals:
-            data = await download_journal_list(jid)
+        for data in await asyncio.gather(*[download_journal_list(jid) for jid in self.init_journals]):
             if data is None:
                 return
             jl = JournalList(data)
