@@ -10,7 +10,8 @@ logger = logging.getLogger("graph")
 
 
 def add_publication(tx, publication, selected=False):
-    n4jset = "MERGE (p:Publication {title_hash:$title_hash}) SET p.dblp_key=$key, p.title=$title, p.journal_key=$journal_key, p.journal=$journal, p.year=$year, p.ccf=$ccf"
+    n4jset = "MERGE (p:Publication {title_hash:$title_hash}) "
+    "SET p.dblp_key=$key, p.title=$title, p.journal_key=$journal_key, p.journal=$journal, p.year=$year, p.ccf=$ccf"
     if publication.doi():
         n4jset += ", p.doi=$doi"
     if selected:
@@ -27,7 +28,10 @@ def add_publication(tx, publication, selected=False):
 
 
 def add_person(tx, person: DBLPPerson, added_pubs: set):
-    tx.run("MERGE (a:Person {dblp_pid: $pid}) SET a.name=$name, a.affiliations=$aff", pid=person.pid(), name=person.name(), aff=list(person.person().affiliations()))
+    tx.run("MERGE (a:Person {dblp_pid: $pid}) "
+           "SET a.name=$name, a.affiliations=$aff",
+           pid=person.pid(), name=person.name(),
+           aff=list(person.person().affiliations()))
     for publication in person.publications():
         if publication.key() in added_pubs:
             continue
