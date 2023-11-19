@@ -60,12 +60,12 @@ class Publication:
             if child.tag == "author":
                 yield Author(child)
 
-    def title(self) -> Optional[str]:
+    def title(self) -> str:
         for child in self.data:
             if child.tag == "title":
                 return " ".join(t for t in child.itertext())
 
-    def title_hash(self) -> Optional[str]:
+    def title_hash(self) -> str:
         return re.sub(r"[^0-9a-z]", "", self.title().lower())
 
     def journal(self) -> Optional[str]:
@@ -114,8 +114,9 @@ class Publication:
 
     def __dict__(self) -> dict:
         return dict(
-            key=self.key(),
+            dblp_key=self.key(),
             title=self.title(),
+            title_hash=self.title_hash(),
             journal=self.journal(),
             journal_key=self.journal_key(),
             year=self.year(),
