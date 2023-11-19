@@ -10,8 +10,8 @@ logger = logging.getLogger("graph")
 
 
 def add_publication(tx, publication, selected=False):
-    n4jset = "MERGE (p:Publication {title_hash:$title_hash}) "
-    "SET p.dblp_key=$key, p.title=$title, p.journal_key=$journal_key, p.journal=$journal, p.year=$year, p.ccf=$ccf"
+    n4jset = "MERGE (p:Publication {title_hash:$title_hash}) "\
+        "SET p.dblp_key=$key, p.title=$title, p.journal_key=$journal_key, p.journal=$journal, p.year=$year, p.ccf=$ccf"
     if publication.doi():
         n4jset += ", p.doi=$doi"
     if selected:
