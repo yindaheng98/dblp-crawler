@@ -1,0 +1,36 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Networkx",
+            "type": "python",
+            "request": "launch",
+            "module": "dblp_crawler",
+            "justMyCode": true,
+            "args": [
+                "-k", "video",
+                "-y", "2018",
+                "-l", "-1",
+                "-p", "l/JiangchuanLiu",
+                "networkx", "--dest", "summary.json"
+            ]
+        },
+        {
+            "name": "Neo4J",
+            "type": "python",
+            "request": "launch",
+            "module": "dblp_crawler",
+            "justMyCode": true,
+            "args": [
+                "-k", "video",
+                "-y", "2018",
+                "-l", "-1",
+                "-p", "l/JiangchuanLiu",
+                "neo4j", "--uri", "neo4j://localhost:7687"
+            ]
+        },
+    ]
+}
