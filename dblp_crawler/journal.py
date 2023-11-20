@@ -1,5 +1,6 @@
 import logging
 import asyncio
+import re
 from typing import AsyncIterator
 import xml.etree.ElementTree as ElementTree
 from .parser import Publication
@@ -26,12 +27,17 @@ class JournalList:
         return self.data.attrib['title']
 
     def journal_keys(self) -> list[str]:
-        v1 = [li.attrib["href"] for li in self.data.findall('./ul/li/ref')]
+        urls = [re.sub(r"\.html$", "", li.attrib["href"]) for li in self.data.findall('./ul/li/ref')]
         h1 = self.data.find('./h1').text
-        v2 = [proceedings.find('./url').text
-              for proceedings in self.data.findall('./dblpcites/r/proceedings')
-              if proceedings.find('./booktitle') is None or proceedings.find('./booktitle').text == h1]
-        return v1 + v2
+        for proceedings in self.data.findall('./dblpcites/r/proceedings'):
+            if proceedings.find('./booktitle') is not None  and proceedings.find('./booktitle').text not in h1:
+                # skip those workshops
+                continue
+            if not proceedings.find('./url'):
+                # skip those not in dblp
+                continue
+            urls.append(re.sub(r"\.html$", "", proceedings.find('./url').text))
+        return urls
 
     async def journals(self) -> AsyncIterator[Journal]:
         for data in await asyncio.gather(*[download_journal(jid) for jid in self.journal_keys()]):
@@ -49,7 +55,7 @@ if __name__ == "__main__":
     from dblp_crawler import download_journal_list
 
     async def main() -> None:
-        data = await download_journal_list('db/journals/tmm')
+        data = await download_journal_list('db/conf/mobicom')
         if data is None:
             return
         jl = JournalList(data)

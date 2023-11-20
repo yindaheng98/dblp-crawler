@@ -20,21 +20,26 @@ class Graph(metaclass=abc.ABCMeta):
     async def init_persons_from_journals(self) -> None:
         author_count = 0
         publication_count = 0
-        for data in await asyncio.gather(*[download_journal_list(jid) for jid in self.init_journals]):
+        tasks = [download_journal_list(jid) for jid in self.init_journals]
+        for jid, data in zip(self.init_journals, await asyncio.gather(*tasks)):
             if data is None:
-                return
+                continue
             jl = JournalList(data)
+            ac, pc = 0, 0
             async for journal in jl.journals():
                 for publication in self.filter_publications_at_crawler(journal.publications()):
                     if publication.key() in self.publications:
                         continue  # 已经遍历过的文章不再重复
                     self.publications[publication.key()] = publication  # 记录下这个文章已遍历
-                    publication_count += 1
+                    pc += 1
                     logger.debug(str(publication))
                     for author in publication.authors():
                         if author.pid() not in self.persons:  # 如果作者不存在
                             self.persons[author.pid()] = None  # 就加入作者
-                            author_count += 1
+                            ac += 1
+            author_count += ac
+            publication_count += pc
+            logger.info("%d initial authors added from %d publications in %s" % (ac, pc, jid))
         logger.info("%d initial authors added from %d publications" % (author_count, publication_count))
 
     @abc.abstractmethod
@@ -58,6 +63,7 @@ class Graph(metaclass=abc.ABCMeta):
     async def bfs_once(self) -> tuple[int, int]:
         if not self.journals_inited:
             await self.init_persons_from_journals()
+            self.journals_inited = True
 
         tasks = []
         init_author_count = 0

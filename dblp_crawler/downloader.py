@@ -46,7 +46,7 @@ async def download_journal_list(pid: str) -> Optional[ElementTree.Element]:
 async def download_journal(pid: str) -> Optional[ElementTree.Element]:
     cache_days = getenv_int('DBLP_CRAWLER_MAX_CACHE_DAYS_JOURNAL')
     cache_days = cache_days if cache_days is not None else -1
-    return await download_item(re.sub(r"\.html$", ".xml", pid), cache_days)
+    return await download_item(pid + ".xml", cache_days)
 
 
 async def download_item(path: str, cache_days: int) -> Optional[ElementTree.Element]:
