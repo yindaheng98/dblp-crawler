@@ -30,12 +30,10 @@ class JournalList:
         urls = [re.sub(r"\.html$", "", li.attrib["href"]) for li in self.data.findall('./ul/li/ref')]
         h1 = self.data.find('./h1').text
         for proceedings in self.data.findall('./dblpcites/r/proceedings'):
-            if proceedings.find('./booktitle') is not None  and proceedings.find('./booktitle').text not in h1:
-                # skip those workshops
-                continue
-            if not proceedings.find('./url'):
-                # skip those not in dblp
-                continue
+            if proceedings.find('./booktitle') is not None and proceedings.find('./booktitle').text.lower() not in h1.lower():
+                continue  # skip those workshops
+            if proceedings.find('./url') is None:
+                continue  # skip those not in dblp
             urls.append(re.sub(r"\.html$", "", proceedings.find('./url').text))
         return urls
 
