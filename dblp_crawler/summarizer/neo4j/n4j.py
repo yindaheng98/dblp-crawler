@@ -11,7 +11,7 @@ logger = logging.getLogger("graph")
 
 def add_publication(tx, publication, selected=False):
     n4jset = "MERGE (p:Publication {title_hash:$title_hash}) "\
-        "SET p.dblp_key=$key, p.title=$title, p.journal_key=$journal_key, p.journal=$journal, p.year=$year, p.ccf=$ccf"
+        "SET p.dblp_key=$key, p.title=$title, p.year=$year"
     if publication.doi():
         n4jset += ", p.doi=$doi"
     if selected:
@@ -20,11 +20,18 @@ def add_publication(tx, publication, selected=False):
            title_hash=publication.title_hash(),
            key=publication.key(),
            title=publication.title(),
-           journal_key=publication.journal_key() or "",
-           journal=publication.journal() or "",
            year=publication.year(),
-           doi=publication.doi(),
-           ccf=publication.ccf())
+           doi=publication.doi())
+    if publication.journal_key() and publication.journal_key() != "db/journals/corr":
+        tx.run("MERGE (p:Journal {dblp_key:$dblp_key}) SET p.dblp_name=$dblp_name, p.ccf=$ccf",
+               dblp_key=publication.journal_key(),
+               dblp_name=publication.journal(),
+               ccf=publication.ccf())
+        tx.run("MERGE (p:Publication {title_hash:$title_hash})"
+               "MERGE (j:Journal {dblp_key:$dblp_key})"
+               "MERGE (p)-[:PUBLISH]->(j)",
+               title_hash=publication.title_hash(),
+               dblp_key=publication.journal_key())
 
 
 def add_person(tx, person: DBLPPerson, added_pubs: set):

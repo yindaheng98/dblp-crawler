@@ -160,7 +160,7 @@ python -m dblp_crawler -k video -k edge -p l/JiangchuanLiu networkx --dest summa
 
 ```sh
 docker pull neo4j
-docker run --rm -it -p 7474:7474 -p 7687:7687 -v $(pwd)save/neo4j:/data -e NEO4J_AUTH=none neo4j
+docker run --rm -it --name neo4j -p 7474:7474 -p 7687:7687 -v "$(pwd)/save/neo4j:/data" -e NEO4J_AUTH=none neo4j
 ```
 
 e.g. write to `neo4j://localhost:7687`:
