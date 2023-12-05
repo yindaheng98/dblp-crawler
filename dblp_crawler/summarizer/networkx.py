@@ -1,6 +1,7 @@
 import abc
 import json
 import logging
+from itertools import combinations
 
 import networkx as nx
 
@@ -29,8 +30,11 @@ class NetworkxGraph(Graph, metaclass=abc.ABCMeta):
     def summarize_person(self, a, person):  # 构建summary
         self.graph.add_node(a, person=person)  # 把作者信息加进图里
 
-    def summarize_publication(self, a, b, publication):  # 构建summary
-        self.graph.add_edge(a, b, key=publication.key(), publication=publication)  # 把边加进图里
+    def summarize_publication(self, authors_pid, publication):  # 构建summary
+        for a, b in combinations(authors_pid, 2):
+            if a == b:
+                continue
+            self.graph.add_edge(a, b, key=publication.key(), publication=publication)  # 把边加进图里
 
     def graph_summary(self):
         """输出一个 networkx.Graph，节点对应作者，每条边对应多篇论文，作者间仅有一条边"""

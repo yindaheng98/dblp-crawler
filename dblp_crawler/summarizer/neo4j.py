@@ -51,9 +51,9 @@ def add_person(tx, person: DBLPPerson, added_pubs: set):
         add_publication(tx, publication)
 
 
-def add_edge(tx, a: str, b: str, publication: Publication):
+def add_edge(tx, author_id, publication: Publication):
     for author in publication.authors():
-        if author.pid() in [a, b]:
+        if author.pid() == author_id:
             n4jset = "MERGE (a:Person {dblp_pid: $pid}) SET a.name=$name"
             if author.orcid():
                 n4jset += ", a.orcid=$orcid"
@@ -61,13 +61,10 @@ def add_edge(tx, a: str, b: str, publication: Publication):
                    pid=author.pid(),
                    name=author.name(),
                    orcid=author.orcid())
-    add_publication(tx, publication, selected=True)
     tx.run("MERGE (a:Person {dblp_pid: $a}) "
-           "MERGE (b:Person {dblp_pid: $b}) "
            "MERGE (p:Publication {title_hash: $title_hash}) "
-           "MERGE (a)-[:WRITE]->(p)"
-           "MERGE (b)-[:WRITE]->(p)",
-           a=a, b=b,
+           "MERGE (a)-[:WRITE]->(p)",
+           a=author_id,
            title_hash=publication.title_hash())
 
 
@@ -81,5 +78,7 @@ class Neo4jGraph(Graph, metaclass=abc.ABCMeta):
         if person is not None:
             self.session.execute_write(add_person, person, self.added_pubs)  # 把作者信息加进图里
 
-    def summarize_publication(self, a: str, b: str, publication: Publication):  # 构建summary
-        self.session.execute_write(add_edge, a, b, publication)  # 把边加进图里
+    def summarize_publication(self, authors_id, publication: Publication):  # 构建summary
+        self.session.execute_write(add_publication, publication, True)
+        for a in authors_id:
+            self.session.execute_write(add_edge, a, publication)  # 把边加进图里

@@ -1,8 +1,8 @@
 import abc
 import asyncio
 import logging
-from itertools import combinations
-from typing import Optional, Iterable
+from typing import Optional, Iterable, List
+from tqdm import tqdm
 
 from dblp_crawler import download_person, DBLPPerson, Publication, download_journal_list, JournalList
 
@@ -117,22 +117,22 @@ class Graph(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def summarize_publication(self, a: str, b: str, publication: Publication) -> None:  # 构建summary
+    def summarize_publication(self, authors_id: List[str], publication: Publication) -> None:  # 构建summary
         """你想要如何Summary一个`Publication`数据？实现此方法"""
         pass
 
     def summarize(self) -> None:
         """执行`summarize_person`和`summarize_publication`指定的Summary过程"""
         summarized_persons = set()
-        for publication in self.filter_publications_at_output(list(self.publications.values())):  # 遍历所有文章
-            authors_pid = {author.pid() for author in publication.authors()}  # 获取作者列表
-            for a, b in combinations(authors_pid, 2):  # 列表中的作者两两之间形成边
-                if a == b or self.persons[a] is None or self.persons[b] is None:
+        publications = list(self.publications.values())
+        for publication in self.filter_publications_at_output(tqdm(publications)):  # 遍历所有文章
+            authors_id = set()
+            for author in publication.authors():
+                a = author.pid()
+                if self.persons[a] is None:
                     continue
                 if a not in summarized_persons:
                     self.summarize_person(a, person=self.persons[a])  # 把作者信息加进图里
                     summarized_persons.add(a)
-                if b not in summarized_persons:
-                    self.summarize_person(b, person=self.persons[b])  # 把作者信息加进图里
-                    summarized_persons.add(b)
-                self.summarize_publication(a, b, publication=publication)  # 把边加进图里
+                authors_id.add(a)
+            self.summarize_publication(authors_id, publication=publication)  # 把边加进图里
