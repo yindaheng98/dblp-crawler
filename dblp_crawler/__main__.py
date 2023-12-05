@@ -7,8 +7,7 @@ from dblp_crawler import Publication
 from dblp_crawler.keyword import Keywords
 from dblp_crawler.keyword.arg import add_argument as add_argument_kw, parse_args as parse_args_kw
 from dblp_crawler.arg import add_argument_pid, add_argument_journal, parse_args_pid_journal
-from dblp_crawler.summarizer.networkx import NetworkxGraph
-from dblp_crawler.summarizer.neo4j import Neo4jGraph
+from dblp_crawler.summarizer import NetworkxGraph, Neo4jGraph
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('dblp_crawler')
