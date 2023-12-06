@@ -13,8 +13,6 @@ package_dir = {
     'dblp_crawler.data.ccf': 'dblp_crawler/data/ccf',
     'dblp_crawler.keyword': 'dblp_crawler/keyword',
     'dblp_crawler.summarizer': 'dblp_crawler/summarizer',
-    'dblp_crawler.summarizer.networkx': 'dblp_crawler/summarizer/networkx',
-    'dblp_crawler.summarizer.neo4j': 'dblp_crawler/summarizer/neo4j',
 }
 
 setup(
