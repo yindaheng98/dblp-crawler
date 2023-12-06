@@ -93,6 +93,9 @@ class Publication:
                 return int(child.text) if child.text is not None else None
         return None
 
+    def mdate(self) -> Optional[str]:
+        return self.data.attrib["mdate"]
+
     def ee(self) -> Iterator[str]:
         for child in self.data:
             if child.tag == "ee":
@@ -120,6 +123,7 @@ class Publication:
             journal=self.journal(),
             journal_key=self.journal_key(),
             year=self.year(),
+            mdate=self.mdate(),
             doi=self.doi(),
             ccf=self.ccf(),
             authors={
