@@ -127,7 +127,7 @@ class Graph(metaclass=abc.ABCMeta):
         publications = list(self.publications.values())
         for publication in self.filter_publications_at_output(tqdm(publications)):  # 遍历所有文章
             authors_id = set()
-            for author in publication.authors():
+            for author in tqdm(list(publication.authors())):
                 a = author.pid()
                 if self.persons[a] is None:
                     continue
