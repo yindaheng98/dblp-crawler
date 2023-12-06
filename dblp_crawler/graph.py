@@ -125,9 +125,9 @@ class Graph(metaclass=abc.ABCMeta):
         """执行`summarize_person`和`summarize_publication`指定的Summary过程"""
         summarized_persons = set()
         publications = list(self.publications.values())
-        for publication in self.filter_publications_at_output(tqdm(publications)):  # 遍历所有文章
+        for publication in self.filter_publications_at_output(tqdm(publications, desc="Writing publications", leave=False, position=0)):  # 遍历所有文章
             authors_id = set()
-            for author in tqdm(list(publication.authors())):
+            for author in tqdm(list(publication.authors()), desc="Writing authors", leave=False, position=1):
                 a = author.pid()
                 if self.persons[a] is None:
                     continue
