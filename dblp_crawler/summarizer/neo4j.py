@@ -74,9 +74,10 @@ def add_edge(tx, author_id, publication: Publication):
 
 
 class Neo4jGraph(Graph, metaclass=abc.ABCMeta):
-    def __init__(self, session: Session, *args, **kwargs):
+    def __init__(self, session: Session, select: bool, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.session = session
+        self.select = select
         self.added_pubs = set()
         self.added_journals = set()
         self.added_orcids = {}
@@ -86,7 +87,7 @@ class Neo4jGraph(Graph, metaclass=abc.ABCMeta):
             self.session.execute_write(add_person, person, self.added_pubs, self.added_journals)  # 把作者信息加进图里
 
     def summarize_publication(self, authors_id, publication: Publication):  # 构建summary
-        self.session.execute_write(add_publication, publication, self.added_journals, True)  # 把文章信息加进图里
+        self.session.execute_write(add_publication, publication, self.added_journals, self.select)  # 把文章信息加进图里
         for a in authors_id:
             self.session.execute_write(add_edge, a, publication)  # 把边加进图里
         self.added_pubs.add(publication.key())

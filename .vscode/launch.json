@@ -14,7 +14,7 @@
                 "-k", "video",
                 "-y", "2018",
                 "-l", "-1",
-                "-p", "l/JiangchuanLiu",
+                "-j", "importlib.import_module('dblp_crawler.data').CCF_A",
                 "networkx", "--dest", "summary.json"
             ]
         },
@@ -28,8 +28,22 @@
                 "-k", "video",
                 "-y", "2018",
                 "-l", "-1",
-                "-p", "l/JiangchuanLiu",
+                "-j", "importlib.import_module('dblp_crawler.data').CCF_A",
                 "neo4j", "--uri", "neo4j://localhost:7687"
+            ]
+        },
+        {
+            "name": "Neo4J-authors-init",
+            "type": "python",
+            "request": "launch",
+            "module": "dblp_crawler",
+            "justMyCode": true,
+            "args": [
+                "-k", "video",
+                "-y", "2018",
+                "-l", "0",
+                "-p", "importlib.import_module('dblp_crawler.data').authors_in_neo4j('neo4j://localhost:7687')",
+                "networkx", "--dest", "summary.json"
             ]
         },
     ]

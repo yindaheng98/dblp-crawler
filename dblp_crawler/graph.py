@@ -40,7 +40,7 @@ class Graph(metaclass=abc.ABCMeta):
             author_count += ac
             publication_count += pc
             logger.info("%d initial authors added from %d publications in %s" % (ac, pc, jid))
-        logger.info("%d initial authors added from %d publications" % (author_count, publication_count))
+        logger.info("%d initial authors added from %d publications in %d journals" % (author_count, publication_count, len(self.init_journals)))
 
     @abc.abstractmethod
     def filter_publications_at_crawler(self, publications: Iterable[Publication]) -> Iterable[Publication]:

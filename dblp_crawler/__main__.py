@@ -105,6 +105,8 @@ class Neo4jGraphDefault(Neo4jGraph):
 parser_n4j = subparsers.add_parser('neo4j', help='Write result to neo4j database')
 parser_n4j.add_argument("--auth", type=str, default=None, help=f'Auth to neo4j database.')
 parser_n4j.add_argument("--uri", type=str, required=True, help=f'URI to neo4j database.')
+parser_n4j.add_argument("--select", action='store_true',
+                        help=f'Mark keyword-matched publications in database (set selected=true).')
 
 
 def func_parser_n4j(parser):
@@ -116,7 +118,8 @@ def func_parser_n4j(parser):
     with GraphDatabase.driver(args.uri, auth=args.auth) as driver:
         with driver.session() as session:
             g = Neo4jGraphDefault(
-                year=year, keywords=keywords, session=session,
+                year=year, keywords=keywords,
+                session=session, select=args.select,
                 pid_list=pid_list, journal_list=journal_list)
             asyncio.get_event_loop().run_until_complete(bfs_to_end(g, limit))
             logger.info(f"Summarizing to: {args.uri}")
