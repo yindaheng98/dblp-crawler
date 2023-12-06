@@ -55,15 +55,14 @@ def add_person(tx, person: DBLPPerson, added_pubs: set, added_journals: set):
            aff=list(person.person().affiliations()),
            orcid=orcid)
     for publication in person.publications():
-        if publication.key() in added_pubs:
-            continue
         tx.run("MERGE (a:Person {dblp_pid: $pid}) "
                "MERGE (p:Publication {title_hash: $title_hash}) "
                "MERGE (a)-[:WRITE]->(p)",
                pid=person.pid(),
                title_hash=publication.title_hash())
-        add_publication(tx, publication, added_journals)
-        added_pubs.add(publication.key())
+        if publication.key() not in added_pubs:
+            add_publication(tx, publication, added_journals)
+            added_pubs.add(publication.key())
 
 
 def add_edge(tx, author_id, publication: Publication):
@@ -90,3 +89,4 @@ class Neo4jGraph(Graph, metaclass=abc.ABCMeta):
         self.session.execute_write(add_publication, publication, self.added_journals, True)  # 把文章信息加进图里
         for a in authors_id:
             self.session.execute_write(add_edge, a, publication)  # 把边加进图里
+        self.added_pubs.add(publication.key())
