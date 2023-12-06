@@ -4,6 +4,7 @@ from .downloader import *
 from typing import Optional, Iterator
 import re
 import logging
+from urllib.parse import urlparse
 
 logger = logging.getLogger("parser")
 
@@ -45,6 +46,13 @@ class Author:
         if data is None:
             return None
         return DBLPPerson(data)
+
+
+def url2doi(url):
+    u = urlparse(url)
+    if u.netloc != "doi.org":
+        return None
+    return re.sub(r"^/+", "", u.path)
 
 
 class Publication:
@@ -104,8 +112,9 @@ class Publication:
 
     def doi(self) -> Optional[str]:
         for e in self.ee():
-            if re.search(r'doi\.org', e) is not None:
-                return e
+            doi = url2doi(e)
+            if doi is not None:
+                return doi
         return None
 
     def ccf(self) -> str:
