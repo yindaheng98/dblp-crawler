@@ -203,6 +203,16 @@ python -m dblp_crawler -k video -k edge -j "importlib.import_module('dblp_crawle
 
 `importlib.import_module` is flexible, you can import your own variables through this.
 
+### Init authors in some variables
+
+e.g. want to crawl publications of those authors stored in neo4j database
+
+```sh
+python -m dblp_crawler -k video -k edge -p "importlib.import_module('dblp_crawler.data').authors_in_neo4j('neo4j://localhost:7687')" networkx --dest summary.json
+```
+
+`importlib.import_module` is flexible, you can import your own variables through this.
+
 ## `dblp_crawler.filter` Usage
 
 Crawling papers takes a long time, so do not filter the papers in the crawling process. Instead, use a separate program `dblp_crawler`.filter` to filter the papers.
