@@ -54,8 +54,14 @@ def add_person(tx, person: DBLPPerson, added_pubs: set, added_journals: set):
            pid=person.pid(), name=person.name(),
            aff=list(person.person().affiliations()),
            orcid=orcid)
+    exist_write_papers = set([title_hash for (title_hash, ) in tx.run(
+        "MATCH (a:Person {dblp_pid: $pid})-[:WRITE]->(p:Publication) RETURN p.title_hash",
+        pid=person.pid()
+    ).values()])
     for publication in person.publications():
-        tx.run("MERGE (a:Person {dblp_pid: $pid}) "
+        if publication.title_hash() in exist_write_papers:
+            continue
+        tx.run("MATCH (a:Person {dblp_pid: $pid}) "
                "MERGE (p:Publication {title_hash: $title_hash}) "
                "MERGE (a)-[:WRITE]->(p)",
                pid=person.pid(),
