@@ -57,8 +57,9 @@ class Graph(metaclass=abc.ABCMeta):
     async def download_person(self, pid: str) -> None:
         data = await download_person(pid)
         if data is None:
-            return
+            return False
         self.persons[pid] = DBLPPerson(data)
+        return True
 
     async def bfs_once(self) -> tuple[int, int]:
         if not self.journals_inited:
@@ -101,15 +102,18 @@ class Graph(metaclass=abc.ABCMeta):
             total_author_count += author_count
             total_publication_count += publication_count
         logger.info("%d authors from %d publications is fetching" % (total_author_count, total_publication_count))
-        await asyncio.gather(*tasks)
+        success = await asyncio.gather(*tasks)
+        all_fail = len(success) <= 0 or True not in success
         logger.info("%d authors added from %d publications" % (total_author_count, total_publication_count))
+        if all_fail:
+            logger.warn("%d download_person all failed in this loop" % all_fail)
         remain_none = 0
         for person in self.persons.values():
             if person is None:
                 remain_none += 1
         logger.info("There are %d authors need init in next loop" % remain_none)
         logger.info("There are %d authors need publications fetching in next loop" % total_author_count)
-        return remain_none, total_author_count
+        return remain_none, total_author_count, all_fail
 
     @abc.abstractmethod
     def summarize_person(self, a: str, person: Optional[DBLPPerson]) -> None:  # 构建summary

@@ -41,7 +41,14 @@ def filter_publications_at_crawler(publications, year: int, keywords: Keywords):
 
 
 async def bfs_to_end(graph, limit: int = 0):
-    while max(*(await graph.bfs_once())) > 0 and (limit != 0):
+    while limit != 0:
+        remain_none, total_author_count, all_fail = await graph.bfs_once()
+        if all_fail:
+            logger.info("Downloading all failed, exit")
+            return
+        if (remain_none + total_author_count) <= 0:
+            logger.info("No more need downloaded, exit")
+            return
         logger.info("Still running......")
         limit -= 1
 
