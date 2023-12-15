@@ -61,11 +61,7 @@ def add_person(tx, person: DBLPPerson, added_pubs: set, added_journals: set):
     for publication in person.publications():
         if publication.title_hash() in exist_write_papers:
             continue
-        tx.run("MATCH (a:Person {dblp_pid: $pid}) "
-               "MERGE (p:Publication {title_hash: $title_hash}) "
-               "MERGE (a)-[:WRITE]->(p)",
-               pid=person.pid(),
-               title_hash=publication.title_hash())
+        add_edge(tx, person.pid(), publication)
         if publication.key() not in added_pubs:
             add_publication(tx, publication, added_journals)
             added_pubs.add(publication.key())
