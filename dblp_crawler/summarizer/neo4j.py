@@ -66,18 +66,26 @@ def add_person(tx, person: DBLPPerson, added_pubs: set, added_journals: set):
     for publication in tqdm(list(person.publications()), desc="Writing author's papers", leave=False, position=2):
         if publication.title_hash() in exist_write_papers:
             continue
-        add_edge(tx, person.pid(), publication)
+        add_edges(tx, [person.pid()], publication)
         if publication.key() not in added_pubs:
             add_publication(tx, publication, added_journals)
             added_pubs.add(publication.key())
 
 
-def add_edge(tx, author_id, publication: Publication):
-    tx.run("MERGE (a:Person {dblp_pid: $a}) "
-           "MERGE (p:Publication {title_hash: $title_hash}) "
-           "MERGE (a)-[:WRITE]->(p)",
-           a=author_id,
-           title_hash=publication.title_hash())
+def add_edges(tx, authors_id, publication: Publication):
+    authors_id_exists = set([
+        authors_id for (authors_id,) in
+        tx.run("MATCH (a:Person)-[:WRITE]->(p:Publication {title_hash: $title_hash}) RETURN a.dblp_pid",
+               title_hash=publication.title_hash()).values()
+    ])
+    for author_id in authors_id:
+        if author_id in authors_id_exists:
+            continue
+        tx.run("MERGE (a:Person {dblp_pid: $a}) "
+               "MERGE (p:Publication {title_hash: $title_hash}) "
+               "MERGE (a)-[:WRITE]->(p)",
+               a=author_id,
+               title_hash=publication.title_hash())
 
 
 class Neo4jGraph(Graph, metaclass=abc.ABCMeta):
@@ -95,6 +103,5 @@ class Neo4jGraph(Graph, metaclass=abc.ABCMeta):
 
     def summarize_publication(self, authors_id, publication: Publication):  # 构建summary
         self.session.execute_write(add_publication, publication, self.added_journals, self.select)  # 把文章信息加进图里
-        for a in authors_id:
-            self.session.execute_write(add_edge, a, publication)  # 把边加进图里
+        self.session.execute_write(add_edges, authors_id, publication)  # 把边加进图里
         self.added_pubs.add(publication.key())
