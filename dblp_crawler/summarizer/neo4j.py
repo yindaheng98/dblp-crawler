@@ -1,6 +1,7 @@
 import abc
 import logging
 from typing import Optional
+from tqdm import tqdm
 
 from neo4j import Session
 
@@ -24,16 +25,20 @@ def add_publication(tx, publication, added_journals: set, selected=False):
            doi=publication.doi())
     if publication.journal_key() and publication.journal_key() != "db/journals/corr":
         if publication.journal_key() not in added_journals:
-            tx.run("MERGE (p:Journal {dblp_key:$dblp_key}) SET p.dblp_name=$dblp_name, p.ccf=$ccf",
+            tx.run("MERGE (j:Journal {dblp_key:$dblp_key}) SET j.dblp_name=$dblp_name, j.ccf=$ccf "
+                   "MERGE (p:Publication {title_hash:$title_hash})"
+                   "MERGE (p)-[:PUBLISH]->(j)",
                    dblp_key=publication.journal_key(),
                    dblp_name=publication.journal(),
-                   ccf=publication.ccf())
+                   ccf=publication.ccf(),
+                   title_hash=publication.title_hash())
             added_journals.add(publication.journal_key())
-        tx.run("MERGE (p:Publication {title_hash:$title_hash})"
-               "MERGE (j:Journal {dblp_key:$dblp_key})"
-               "MERGE (p)-[:PUBLISH]->(j)",
-               title_hash=publication.title_hash(),
-               dblp_key=publication.journal_key())
+        else:
+            tx.run("MERGE (p:Publication {title_hash:$title_hash})"
+                   "MERGE (j:Journal {dblp_key:$dblp_key})"
+                   "MERGE (p)-[:PUBLISH]->(j)",
+                   dblp_key=publication.journal_key(),
+                   title_hash=publication.title_hash())
 
 
 def find_orcid(person):
@@ -58,7 +63,7 @@ def add_person(tx, person: DBLPPerson, added_pubs: set, added_journals: set):
         "MATCH (a:Person {dblp_pid: $pid})-[:WRITE]->(p:Publication) RETURN p.title_hash",
         pid=person.pid()
     ).values()])
-    for publication in person.publications():
+    for publication in tqdm(list(person.publications()), desc="Writing author's papers", leave=False, position=2):
         if publication.title_hash() in exist_write_papers:
             continue
         add_edge(tx, person.pid(), publication)
