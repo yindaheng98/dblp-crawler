@@ -21,6 +21,8 @@ class Keywords:
         self.add_rule_list(*list(set(word, ) for word in words))
 
     def match(self, sentence: str) -> bool:
+        if len(self.rules) <= 0 and len(self.words) <= 0:
+            return True  # 没有规则就全过
         sentence = sentence.lower()
         words = set(re.findall(r"\w+", sentence))
         for rule in self.rules:  # 只要有一个rule能匹配上就返回True
@@ -29,6 +31,8 @@ class Keywords:
         return False
 
     def match_words(self, sentence: str) -> bool:
+        if len(self.rules) <= 0 and len(self.words) <= 0:
+            return True  # 没有规则就全过
         sentence = sentence.lower()
         # 所有rule全切成一个个单词，只要包含其中一个单词就返回True
         return len(set(re.findall(r"\w+", sentence)).intersection(self.words)) > 0

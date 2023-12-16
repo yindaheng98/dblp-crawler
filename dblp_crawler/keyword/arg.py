@@ -3,11 +3,11 @@ import importlib
 from . import Keywords
 
 
-def add_argument(parser: argparse.ArgumentParser, *flags, dest: str = 'keyword', required=True) -> None:
+def add_argument(parser: argparse.ArgumentParser, *flags, dest: str = 'keyword') -> None:
     if len(flags) <= 0:
         flags = ['-k', '--keyword']
     parser.add_argument(
-        *flags, dest=dest, action='append', required=required,
+        *flags, dest=dest, action='append', required=False, default=[],
         help=f'Specify keyword rules.'
     )
 
