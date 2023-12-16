@@ -17,7 +17,7 @@ package_dir = {
 
 setup(
     name='dblp_crawler',
-    version='1.8.12',
+    version='1.8.14',
     author='yindaheng98',
     author_email='yindaheng98@gmail.com',
     url='https://github.com/yindaheng98/dblp-crawler',
@@ -36,5 +36,6 @@ setup(
         'aiofile>=3.8.1',
         'aiohttp>=3.8.1',
         'neo4j>=5.5.0',
+        'tqdm>=4.66.1',
     ],
 )

@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  dblp-crawler:
+    image: dblp-crawler:latest
+    build:
+      context: ..
+      dockerfile: ./.devcontainer/Dockerfile
+      
+    stdin_open: true
+    tty: true
+    volumes:
+      - ../:/volume
+    working_dir: /volume
+    command: /bin/bash
+

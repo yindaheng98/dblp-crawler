@@ -1,0 +1,14 @@
+{
+    "name": "dblp-crawler Dev Container",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "dblp-crawler",
+    "workspaceFolder": "/volume",
+    "shutdownAction": "stopCompose",
+    "extensions": [
+        "ms-vscode.cpptools",
+        "ms-vscode.cmake-tools",
+        "mutantdino.resourcemonitor",
+        "ms-azuretools.vscode-docker",
+        "nvidia.nsight-vscode-edition"
+    ]
+}
