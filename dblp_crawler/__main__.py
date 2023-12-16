@@ -110,7 +110,8 @@ class Neo4jGraphDefault(Neo4jGraph):
 
 
 parser_n4j = subparsers.add_parser('neo4j', help='Write result to neo4j database')
-parser_n4j.add_argument("--auth", type=str, default=None, help=f'Auth to neo4j database.')
+parser_n4j.add_argument("--username", type=str, default=None, help=f'Auth username to neo4j database.')
+parser_n4j.add_argument("--password", type=str, default=None, help=f'Auth password to neo4j database.')
 parser_n4j.add_argument("--uri", type=str, required=True, help=f'URI to neo4j database.')
 parser_n4j.add_argument("--select", action='store_true',
                         help=f'Mark keyword-matched publications in database (set selected=true).')
@@ -120,9 +121,9 @@ def func_parser_n4j(parser):
     from neo4j import GraphDatabase
     year, keywords, pid_list, journal_list, limit = func_parser(parser)
     args = parser.parse_args()
-    logger.info(f"Specified uri and auth: {args.uri} {args.auth}")
+    logger.info(f"Specified uri and auth: {args.uri} {args.username} {'******' if args.password else 'none'}")
 
-    with GraphDatabase.driver(args.uri, auth=args.auth) as driver:
+    with GraphDatabase.driver(args.uri, auth=(args.username, args.password)) as driver:
         with driver.session() as session:
             g = Neo4jGraphDefault(
                 year=year, keywords=keywords,
