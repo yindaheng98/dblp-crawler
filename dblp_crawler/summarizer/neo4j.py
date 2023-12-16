@@ -34,8 +34,8 @@ def add_publication(tx, publication, added_journals: set, selected=False):
                    title_hash=publication.title_hash())
             added_journals.add(publication.journal_key())
         else:
-            tx.run("MERGE (p:Publication {title_hash:$title_hash})"
-                   "MERGE (j:Journal {dblp_key:$dblp_key})"
+            tx.run("MERGE (j:Journal {dblp_key:$dblp_key})"
+                   "MERGE (p:Publication {title_hash:$title_hash})"
                    "MERGE (p)-[:PUBLISH]->(j)",
                    dblp_key=publication.journal_key(),
                    title_hash=publication.title_hash())
