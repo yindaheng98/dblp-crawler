@@ -12,7 +12,7 @@ class Graph(metaclass=abc.ABCMeta):
     def __init__(self, pid_list: list[str], journal_list: list[str]) -> None:
         self.persons: dict[str, Optional[DBLPPerson]] = {pid: None for pid in pid_list}
         self.summarized_person: set[str] = set()
-        self.publications: dict[str, Publication] = set()
+        self.publications: set[str] = set()
         self.init_journals = journal_list
         self.journals_inited = False
         self.total_author_succ_count, self.total_author_fail_count = 0, 0
