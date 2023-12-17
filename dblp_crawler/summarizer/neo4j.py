@@ -63,7 +63,7 @@ def add_person(tx, person: DBLPPerson, added_pubs: set, added_journals: set):
         "MATCH (a:Person {dblp_pid: $pid})-[:WRITE]->(p:Publication) RETURN p.title_hash",
         pid=person.pid()
     ).values()])
-    for publication in tqdm(list(person.publications()), desc="Writing author's papers", leave=False, position=2):
+    for publication in tqdm(list(person.publications()), desc="Writing author's papers"):
         if publication.title_hash() in exist_write_papers:
             continue
         add_edges(tx, [person.pid()], publication)

@@ -38,8 +38,6 @@ class NetworkxGraph(Graph, metaclass=abc.ABCMeta):
 
     def graph_summary(self):
         """输出一个 networkx.Graph，节点对应作者，每条边对应多篇论文，作者间仅有一条边"""
-        self.graph = nx.MultiGraph()
-        self.summarize()
         gg = nx.Graph()
         authors = {}
         for (a, b, d) in self.graph.edges(data=True):  # 遍历所有文章

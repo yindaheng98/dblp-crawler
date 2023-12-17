@@ -1,6 +1,6 @@
 import argparse
 import asyncio
-from typing import Iterable
+from typing import Iterable, AsyncIterable
 import logging
 
 from dblp_crawler import Publication
@@ -67,8 +67,9 @@ class NetworkxGraphDefault(NetworkxGraph):
     def filter_publications_at_crawler(self, publications: Iterable[Publication]) -> Iterable[Publication]:
         yield from filter_publications_at_crawler(publications, self.year, self.keywords)
 
-    def filter_publications_at_output(self, publications: Iterable[Publication]) -> Iterable[Publication]:
-        yield from publications
+    async def filter_publications_at_output(self, publications: AsyncIterable[Publication]) -> AsyncIterable[Publication]:
+        async for publication in publications:
+            yield publication
 
 
 parser_nx = subparsers.add_parser('networkx', help='Write results to a json file.')
@@ -105,8 +106,9 @@ class Neo4jGraphDefault(Neo4jGraph):
     def filter_publications_at_crawler(self, publications: Iterable[Publication]) -> Iterable[Publication]:
         yield from filter_publications_at_crawler(publications, self.year, self.keywords)
 
-    def filter_publications_at_output(self, publications: Iterable[Publication]) -> Iterable[Publication]:
-        yield from publications
+    async def filter_publications_at_output(self, publications: AsyncIterable[Publication]) -> AsyncIterable[Publication]:
+        async for publication in publications:
+            yield publication
 
 
 parser_n4j = subparsers.add_parser('neo4j', help='Write result to neo4j database')
@@ -129,9 +131,8 @@ def func_parser_n4j(parser):
                 year=year, keywords=keywords,
                 session=session, select=args.select,
                 pid_list=pid_list, journal_list=journal_list)
-            asyncio.get_event_loop().run_until_complete(bfs_to_end(g, limit))
             logger.info(f"Summarizing to: {args.uri}")
-            g.summarize()
+            asyncio.get_event_loop().run_until_complete(bfs_to_end(g, limit))
 
 
 parser_n4j.set_defaults(func=func_parser_n4j)
