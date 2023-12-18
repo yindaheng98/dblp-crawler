@@ -4,6 +4,7 @@ import logging
 from typing import Optional, Iterable, AsyncIterable, List
 
 from dblp_crawler import download_person, DBLPPerson, Publication, download_journal_list, JournalList
+from .gather import gather
 
 logger = logging.getLogger("graph")
 
@@ -44,7 +45,7 @@ class Graph(metaclass=abc.ABCMeta):
                     atasks.append(self._collect_authors(publication))  # 遍历这个文章
                     logger.debug(str(publication))
             asc, afc = 0, 0
-            for publication, success, fail in await asyncio.gather(*atasks):
+            async for publication, success, fail in gather(*atasks):
                 asc += success
                 afc += fail
                 yield publication
@@ -117,7 +118,7 @@ class Graph(metaclass=abc.ABCMeta):
             total_publication_count += publication_count
 
         # 执行任务：获取已有作者列表中的论文
-        for publication, success, fail in await asyncio.gather(*atasks):
+        async for publication, success, fail in gather(*atasks):
             total_author_succ_count += success
             total_author_fail_count += fail
             yield publication
