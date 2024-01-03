@@ -32,7 +32,6 @@ jobs:
 
       - name: Upload
         env:
-          PIP_USERNAME: ${{ secrets.PIP_USERNAME }}
-          PIP_PASSWORD: ${{ secrets.PIP_PASSWORD }}
+          PIP_API_TOKEN: ${{ secrets.PIP_API_TOKEN }}
         run: |
-          python -m twine upload dist/* --username ${PIP_USERNAME} --password ${PIP_PASSWORD} --skip-existing
+          python -m twine upload dist/* --username __token__ --password ${PIP_API_TOKEN} --skip-existing
