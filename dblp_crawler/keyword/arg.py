@@ -18,10 +18,9 @@ def parse_args(parser: argparse.ArgumentParser, dest: str = 'keyword'):
     for s in args.__getattribute__(dest):
         try:
             s = eval(s)
-            if isinstance(s, str):
-                keywords.add_rule(s)
-            else:
-                keywords.add_rule(*s)
         except:
-            keywords.add_rule(s)
+            pass
+        if isinstance(s, str):
+            s = [c for c in s.split(" ") if len(c) > 0]
+        keywords.add_rule(*s)
     return keywords
