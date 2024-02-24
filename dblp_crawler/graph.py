@@ -1,7 +1,7 @@
 import abc
 import asyncio
 import logging
-from typing import Optional, Iterable, AsyncIterable, List
+from typing import Optional, Iterable, AsyncIterable, List, Dict, Set
 
 from dblp_crawler import download_person, DBLPPerson, Publication, download_journal_list, JournalList
 from .gather import gather
@@ -10,10 +10,10 @@ logger = logging.getLogger("graph")
 
 
 class Graph(metaclass=abc.ABCMeta):
-    def __init__(self, pid_list: list[str], journal_list: list[str]) -> None:
-        self.persons: dict[str, Optional[DBLPPerson]] = {pid: None for pid in pid_list}
-        self.summarized_person: set[str] = set()
-        self.publications: set[str] = set()
+    def __init__(self, pid_list: List[str], journal_list: List[str]) -> None:
+        self.persons: Dict[str, Optional[DBLPPerson]] = {pid: None for pid in pid_list}
+        self.summarized_person: Set[str] = set()
+        self.publications: Set[str] = set()
         self.init_journals = journal_list
         self.journals_inited = False
         self.total_author_succ_count, self.total_author_fail_count = 0, 0

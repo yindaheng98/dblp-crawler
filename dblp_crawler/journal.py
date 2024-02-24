@@ -1,7 +1,7 @@
 import logging
 import asyncio
 import re
-from typing import AsyncIterator
+from typing import AsyncIterator, List
 import xml.etree.ElementTree as ElementTree
 from .parser import Publication
 from .downloader import download_journal
@@ -14,7 +14,7 @@ class Journal:
         assert data.tag == "bht", "Should be xml of a bht!"
         self.data = data
 
-    def publications(self) -> list[Publication]:
+    def publications(self) -> List[Publication]:
         return [Publication(r) for r in self.data.findall('./dblpcites/r')]
 
 
@@ -26,7 +26,7 @@ class JournalList:
     def title(self) -> str:
         return self.data.attrib['title']
 
-    def journal_keys(self) -> list[str]:
+    def journal_keys(self) -> List[str]:
         urls = [re.sub(r"\.html$", "", li.attrib["href"]) for li in self.data.findall('./ul/li/ref')]
         h1 = self.data.find('./h1').text
         for proceedings in self.data.findall('./dblpcites/r/proceedings'):

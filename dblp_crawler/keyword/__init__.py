@@ -1,10 +1,11 @@
 import re
+from typing import Set
 
 
 class Keywords:
     def __init__(self) -> None:
-        self.rules: set[tuple[str, ...]] = set()
-        self.words: set[str] = set()
+        self.rules: Set[tuple[str, ...]] = set()
+        self.words: Set[str] = set()
 
     def add_rule(self, *rule: str) -> None:
         """与关系的单词列"""
@@ -12,7 +13,7 @@ class Keywords:
         self.rules.add(rule)
         self.words = self.words.union(rule)
 
-    def add_rule_list(self, *rule_list: set[str]) -> None:
+    def add_rule_list(self, *rule_list: Set[str]) -> None:
         """多个与关系的单词列"""
         for rule in rule_list:
             self.add_rule(*rule)

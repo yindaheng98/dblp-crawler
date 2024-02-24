@@ -1,5 +1,5 @@
 import re
-from typing import Optional
+from typing import Optional, List
 from .CCF_A import data as CCF_A
 from .CCF_B import data as CCF_B
 from .CCF_C import data as CCF_C
@@ -18,12 +18,12 @@ def key(r: str, ccf: str) -> Optional[str]:
     return "/".join(search.group(1).split("/")[0:3])
 
 
-CCF_A: list[str] = list(filter(None, (key(r, 'A') for r in CCF_A)))
-CCF_B: list[str] = list(filter(None, (key(r, 'B') for r in CCF_B)))
+CCF_A: List[str] = list(filter(None, (key(r, 'A') for r in CCF_A)))
+CCF_B: List[str] = list(filter(None, (key(r, 'B') for r in CCF_B)))
 CCF_B += [
     "db/journals/pe",
     "db/journals/tissec",
     "db/journals/cogsci",
     "db/conf/hotchips"
 ]
-CCF_C: list[str] = list(filter(None, (key(r, 'C') for r in CCF_C)))
+CCF_C: List[str] = list(filter(None, (key(r, 'C') for r in CCF_C)))
