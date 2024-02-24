@@ -1,7 +1,7 @@
 import abc
 import asyncio
 import logging
-from typing import Optional, Iterable, AsyncIterable, List, Dict, Set
+from typing import Optional, Iterable, AsyncIterable, List, Dict, Set, Tuple
 
 from dblp_crawler import download_person, DBLPPerson, Publication, download_journal_list, JournalList
 from .gather import gather
@@ -136,7 +136,7 @@ class Graph(metaclass=abc.ABCMeta):
         """你想要如何Summary一个`Publication`数据？实现此方法"""
         pass
 
-    async def bfs_once(self) -> tuple[int, int]:
+    async def bfs_once(self) -> Tuple[int, int]:
         """执行`summarize_person`和`summarize_publication`指定的Summary过程"""
         # 执行summarize
         async for publication in self.filter_publications_at_output(self._bfs_once()):
