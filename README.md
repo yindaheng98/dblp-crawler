@@ -181,6 +181,8 @@ Without index, NEO4J query will be very very slow. So before you start, you shou
 CREATE INDEX publication_title_hash_index FOR (p:Publication) ON (p.title_hash);
 CREATE INDEX publication_dblp_key_index FOR (p:Publication) ON (p.dblp_key);
 CREATE INDEX publication_doi_index FOR (p:Publication) ON (p.doi);
+CREATE INDEX person_dblp_pid_index FOR (p:Person) ON (p.dblp_pid);
+CREATE INDEX journal_dblp_key_index FOR (p:Journal) ON (p.dblp_key);
 ```
 
 ### Only crawl the paper after specified year
