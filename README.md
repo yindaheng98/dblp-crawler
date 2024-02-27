@@ -173,6 +173,16 @@ e.g. write to `neo4j://localhost:7687`:
 python -m dblp_crawler -k video -k edge -p l/JiangchuanLiu neo4j --uri neo4j://localhost:7687
 ```
 
+#### Tips
+
+Without index, NEO4J query will be very very slow. So before you start, you should add some index:
+
+```cql
+CREATE INDEX publication_title_hash_index FOR (p:Publication) ON (p.title_hash);
+CREATE INDEX publication_dblp_key_index FOR (p:Publication) ON (p.dblp_key);
+CREATE INDEX publication_doi_index FOR (p:Publication) ON (p.doi);
+```
+
 ### Only crawl the paper after specified year
 
 e.g. crawl the paper after 2016 (include 2016)
