@@ -8,6 +8,12 @@ Crawl papers from dblp and connect them into an undirected graph. Each edge is a
 
 从dblp爬文章并将其组织为无向图。图的边是文章，节点是作者。
 
+Neo4J output compatible with [citation-crawler](https://github.com/yindaheng98/citation-crawler)
+
+Neo4J形式的输出和[citation-crawler](https://github.com/yindaheng98/citation-crawler)兼容
+
+![](asserts/graph.png)
+
 ## Install
 
 ```sh
