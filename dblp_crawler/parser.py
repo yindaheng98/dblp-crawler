@@ -74,7 +74,7 @@ class Publication:
                 return " ".join(t for t in child.itertext())
 
     def title_hash(self) -> str:
-        return re.sub(r"[^0-9a-z]", "", self.title().lower())
+        return re.sub(r"[^0-9a-z\u4e00-\u9fa5]", "", self.title().lower())
 
     def journal(self) -> Optional[str]:
         tag = {
