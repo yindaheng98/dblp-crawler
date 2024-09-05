@@ -10,7 +10,7 @@ logger = logging.getLogger("parser")
 
 
 def title_hash(title):
-    return re.sub(r"[^0-9a-z]", "", title.lower()) or title.lower()
+    return re.sub(r"[^0-9a-z\u4E00-\u9FFF\uFB00-\uFEFF]", "", title.lower()) or title.lower()
 
 
 class Person:
