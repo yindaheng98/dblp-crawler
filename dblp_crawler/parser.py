@@ -9,6 +9,10 @@ from urllib.parse import urlparse
 logger = logging.getLogger("parser")
 
 
+def title_hash(title):
+    return re.sub(r"[^0-9a-z]", "", title.lower()) or title.lower()
+
+
 class Person:
     def __init__(self, data: ElementTree.Element) -> None:
         assert data.tag == "person", "Should be xml of a person in dblpperson!"
@@ -74,7 +78,7 @@ class Publication:
                 return " ".join(t for t in child.itertext())
 
     def title_hash(self) -> str:
-        return re.sub(r"[^0-9a-z\u4e00-\u9fa5]", "", self.title().lower())
+        return title_hash(self.title())
 
     def journal(self) -> Optional[str]:
         tag = {
